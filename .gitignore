@@ -1,0 +1,24 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# tina
+tina/__generated__/
+admin/
+public/admin/
+
+# env
+.env
+.env.production
+.env*.local
+
+# os / editor
+.DS_Store
+*.log
+npm-debug.log*
+
+# kept for reference, not part of the app
+# design-reference/  (committed intentionally as a design handoff record)

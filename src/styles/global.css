@@ -1,0 +1,163 @@
+/* Global notebook styles — ported from the Claude Design handoff
+   (design-reference/project/notebook.jsx injectStyles + Portfolio.html).
+   Component-scoped styles live in each .astro file; this holds the shared
+   resets, hover/animation behavior, and font fallbacks. */
+
+:root {
+  --nb-paper: #fbfaf5;
+  --nb-ink: #1a1a1a;
+  --nb-ink-soft: #2a2a2a;
+  --nb-pencil: #5a5a5a;
+  --nb-yellow: #ffe45c;
+  --nb-pink: #ffc9d4;
+  --nb-blue: #bcdfff;
+  --nb-green: #c6efb0;
+  /* page horizontal padding — small on mobile, generous on desktop */
+  --nb-pad: 22px;
+}
+
+@media (min-width: 880px) {
+  :root { --nb-pad: 60px; }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--nb-paper);
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Clip stray horizontal overflow (rotated stickies, decorations) without
+     creating a scroll container. Kept on <html> only — putting overflow on
+     <body> risks viewport propagation and a second scrollbar. */
+  overflow-x: clip;
+}
+
+body {
+  font-family: 'Caveat', cursive;
+  color: var(--nb-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+
+/* ---------- Sticky note (tilted, drop shadow, peel on hover) ---------- */
+.nb-sticky {
+  position: relative;
+  padding: 10px 14px 12px;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.08),
+    0 6px 14px -4px rgba(0, 0, 0, 0.18),
+    inset 0 -8px 14px -10px rgba(0, 0, 0, 0.15);
+  transition: transform .35s cubic-bezier(.2, .7, .3, 1), box-shadow .35s;
+  will-change: transform;
+  transform-origin: top left;
+}
+.nb-sticky::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 26px; height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  transform: translateX(-50%);
+  border-radius: 0 0 4px 4px;
+}
+.nb-sticky-peel:hover {
+  transform: rotate(0deg) translateY(-3px) scale(1.03) !important;
+  box-shadow:
+    0 2px 2px rgba(0, 0, 0, 0.10),
+    0 18px 28px -8px rgba(0, 0, 0, 0.28),
+    inset 0 -8px 14px -10px rgba(0, 0, 0, 0.15);
+}
+.nb-sticky-peel:hover::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 22px; height: 22px;
+  background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.08) 50%, rgba(0, 0, 0, 0.18) 100%);
+  transition: all .25s;
+}
+.nb-sticky-inner { display: block; position: relative; z-index: 1; }
+
+/* ---------- Photo cutout (white border, striped placeholder) ---------- */
+.nb-photo {
+  background: #fff;
+  padding: 8px 8px 32px;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.06),
+    0 10px 22px -8px rgba(0, 0, 0, 0.30),
+    0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform .3s cubic-bezier(.2, .7, .3, 1);
+}
+.nb-photo:hover { transform: rotate(0deg) scale(1.02) !important; }
+.nb-photo-inner {
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(135deg, #ededea 0 6px, #f4f3ef 6px 12px);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.nb-photo-placeholder {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  height: 100%; width: 100%;
+}
+
+/* ---------- Hand-drawn link underline (draws in on hover) ---------- */
+.nb-link {
+  position: relative;
+  text-decoration: none;
+  display: inline-block;
+}
+.nb-link::after {
+  content: '';
+  position: absolute;
+  left: -2px; right: -2px;
+  bottom: -3px;
+  height: 8px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 8' preserveAspectRatio='none'><path d='M2,5 C30,2 60,7 90,3 C110,1 130,6 158,3' fill='none' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .35s cubic-bezier(.65, 0, .35, 1);
+}
+.nb-link:hover::after { transform: scaleX(1); }
+
+/* ---------- Page enter transition ---------- */
+.nb-page-enter { animation: nbPageIn .45s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes nbPageIn {
+  from { opacity: 0; transform: translateY(12px) rotate(-0.4deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(0); }
+}
+
+/* ---------- Scroll reveal (progressive enhancement) ----------
+   Elements tagged [data-reveal] start hidden and fade/rise into place
+   when scrolled into view. Gated on `html.js` so content is never
+   hidden if JS is off. The reveal script removes the attribute once
+   done, so component hover transitions are unaffected afterward. */
+html.js [data-reveal] {
+  opacity: 0;
+  /* translateY only — no rotate. Rotating full-width blocks pushes their
+     corners past the viewport and triggers a horizontal scrollbar. */
+  transform: translateY(24px);
+  transition:
+    opacity .55s ease-out,
+    transform .55s cubic-bezier(.2, .7, .3, 1);
+}
+html.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .nb-page-enter { animation: none; }
+  .nb-sticky, .nb-photo { transition: none; }
+  html.js [data-reveal] { opacity: 1; transform: none; transition: none; }
+}

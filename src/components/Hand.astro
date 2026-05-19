@@ -1,0 +1,23 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  size?: number | string;
+  color?: string;
+  weight?: number | string;
+  as?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
+
+const { size = 18, color = NB.ink, weight = 500, as: Tag = 'span', class: className, ...rest } = Astro.props;
+const fontSize = cssSize(size);
+---
+
+<Tag
+  class={className}
+  style={`font-family: "Caveat", cursive; font-size: ${fontSize}; color: ${color}; line-height: 1.35; font-weight: ${weight};`}
+  {...rest}
+><slot /></Tag>

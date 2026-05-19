@@ -1,0 +1,91 @@
+---
+// Base layout — <head>, fonts, global styles, cross-page transitions.
+// Every page wraps its content in this. The page body content should be a
+// single GridPaper so the notebook paper fills the viewport.
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Ashwin KV — Portfolio',
+  description = 'Ashwin KV — senior frontend engineer, self-taught, building for the web.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Permanent+Marker&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    {/* Enables scroll-reveal styles; runs before paint so content never flashes. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
+
+    <ClientRouter />
+  </head>
+  <body>
+    <main transition:animate="fade">
+      <slot />
+    </main>
+
+    <script>
+      // Scroll-reveal: fade + rise [data-reveal] elements as they enter view.
+      // Auto-staggers items that appear together; respects reduced-motion;
+      // re-runs after every client-side navigation (astro:page-load).
+      function initReveal() {
+        const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+        if (!els.length) return;
+
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) {
+          els.forEach((el) => el.classList.add('is-revealed'));
+          return;
+        }
+
+        const io = new IntersectionObserver(
+          (entries, obs) => {
+            entries
+              .filter((e) => e.isIntersecting)
+              .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+              .forEach((entry, i) => {
+                const el = entry.target as HTMLElement;
+                el.style.transitionDelay = i * 85 + 'ms';
+                el.classList.add('is-revealed');
+                obs.unobserve(el);
+                // Once the fade finishes, drop the attribute so it no longer
+                // overrides component hover transitions.
+                el.addEventListener('transitionend', function done(ev) {
+                  if ((ev as TransitionEvent).propertyName !== 'opacity') return;
+                  el.removeEventListener('transitionend', done);
+                  el.style.transitionDelay = '';
+                  el.removeAttribute('data-reveal');
+                });
+              });
+          },
+          { threshold: 0.1, rootMargin: '0px 0px -8% 0px' },
+        );
+
+        els.forEach((el) => io.observe(el));
+      }
+
+      document.addEventListener('astro:page-load', initReveal);
+    </script>
+  </body>
+</html>

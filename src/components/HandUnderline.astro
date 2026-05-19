@@ -1,0 +1,41 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  width?: number | string;
+  color?: string;
+  strokeWidth?: number;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
+
+const { width = 120, color = NB.ink, strokeWidth = 2.5, class: className, ...rest } = Astro.props;
+
+// Three slightly-different paths — use the first one at build time
+// (runtime random not possible in static Astro; use a fixed path)
+const path = 'M2,7 C30,4 60,9 90,5 C110,3 130,8 158,5';
+
+const w = typeof width === 'number' ? width : 120;
+const svgWidth = cssSize(width);
+const svgHeight = typeof width === 'number' ? (width * 12 / 160) + 'px' : '9px';
+---
+
+<svg
+  viewBox="0 0 160 12"
+  width={svgWidth}
+  height={svgHeight}
+  class={className}
+  style="display: block; overflow: visible;"
+  {...rest}
+>
+  <path
+    d={path}
+    fill="none"
+    stroke={color}
+    stroke-width={strokeWidth}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

@@ -1,0 +1,19 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  href?: string;
+  color?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { href = '#', color = NB.ink, class: className, ...rest } = Astro.props;
+---
+
+<a
+  href={href}
+  class={`nb-link${className ? ' ' + className : ''}`}
+  style={`color: ${color};`}
+  {...rest}
+><span><slot /></span></a>

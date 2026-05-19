@@ -1,0 +1,22 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  size?: number | string;
+  color?: string;
+  as?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
+
+const { size = 10, color = NB.pencil, as: Tag = 'span', class: className, ...rest } = Astro.props;
+const fontSize = cssSize(size);
+---
+
+<Tag
+  class={className}
+  style={`font-family: "JetBrains Mono", ui-monospace, monospace; font-size: ${fontSize}; color: ${color}; letter-spacing: 1.5px; text-transform: uppercase;`}
+  {...rest}
+><slot /></Tag>

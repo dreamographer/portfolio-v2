@@ -1,0 +1,48 @@
+{
+  "name": "Ashwin KV",
+  "firstName": "Ashwin",
+  "greeting": "hi, I'm",
+  "tagline": [
+    { "text": "a ", "highlight": "" },
+    { "text": "senior frontend engineer", "highlight": "yellow" },
+    { "text": ", ", "highlight": "" },
+    { "text": "self-taught", "highlight": "pink" },
+    { "text": " & building for the web.", "highlight": "" }
+  ],
+  "status": "open to work",
+  "photo": null,
+  "photoCaption": "that's me, says hi",
+  "tags": ["self-taught", "curious", "fast", "kind", "detail-obsessed", "react", "typescript"],
+  "bio": "I write code for the web. I care about fast pages, calm interfaces, and details that make people smile. Mostly self-taught — the internet was my classroom, curiosity is my main skill, and I've shipped a few things I'm proud of since.",
+  "contacts": [
+    {
+      "icon": "✉",
+      "label": "ashwin@placeholder.dev",
+      "url": "mailto:ashwin@placeholder.dev",
+      "sub": "email",
+      "color": "yellow"
+    },
+    {
+      "icon": "GH",
+      "label": "github.com/ashwinkv",
+      "url": "https://github.com/ashwinkv",
+      "sub": "code",
+      "color": "pink"
+    },
+    {
+      "icon": "in",
+      "label": "linkedin/ashwinkv",
+      "url": "https://linkedin.com/in/ashwinkv",
+      "sub": "work",
+      "color": "blue"
+    },
+    {
+      "icon": "𝕏",
+      "label": "@ashwinkv",
+      "url": "https://x.com/ashwinkv",
+      "sub": "thoughts",
+      "color": "green"
+    }
+  ],
+  "footerNote": "© 2026 ashwin kv — built by hand, scribbled with love."
+}

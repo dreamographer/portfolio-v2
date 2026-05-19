@@ -1,0 +1,192 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import Hand from '../components/Hand.astro';
+import HandLink from '../components/HandLink.astro';
+import Marker from '../components/Marker.astro';
+import Mono from '../components/Mono.astro';
+import PhotoCutout from '../components/PhotoCutout.astro';
+import { NB } from '../lib/notebook';
+
+const rawItems = await getCollection('gallery');
+const items = rawItems.sort((a, b) => a.data.order - b.data.order);
+
+// Split into columns for masonry layout
+// Mobile: 2 columns (even index → col 0, odd → col 1)
+// Desktop: 4 columns (index % 4)
+const col0 = items.filter((_, i) => i % 2 === 0);
+const col1 = items.filter((_, i) => i % 2 === 1);
+
+// Desktop 4-col split
+const dcols: (typeof items)[] = [[], [], [], []];
+items.forEach((it, i) => dcols[i % 4].push(it));
+---
+
+<Base title="Gallery — Ashwin KV" description="Photos, screenshots, sketches. A pinboard of stuff I like.">
+  <GridPaper size={22} class="gallery-root">
+
+    {/* ─── Header ─── */}
+    <header class="detail-header">
+      <div class="detail-header-left">
+        <HandLink href="/" color={NB.pencil}>
+          <Hand size={18} color={NB.pencil}>← back to home</Hand>
+        </HandLink>
+        <Marker size="clamp(36px, 7vw, 60px)" as="h1" style="display:block; margin-top:2px;">Gallery.</Marker>
+      </div>
+      <Mono size={9} class="detail-header-tag">ashwin.kv</Mono>
+    </header>
+
+    {/* ─── Content ─── */}
+    <div class="gallery-body">
+      <Hand size={19} color={NB.inkSoft} as="p" class="gallery-intro">
+        Photos, screenshots, sketches. A pinboard of stuff I like.
+      </Hand>
+
+      {/* ─── Mobile grid (2-col) ─── */}
+      <div class="gallery-grid-mobile">
+        <div class="gallery-col">
+          {col0.map((it) => (
+            <PhotoCutout
+              data-reveal
+              width="100%"
+              height={it.data.height ?? 150}
+              rotate={it.data.rotate ?? -1.5}
+              label={it.data.label}
+              src={it.data.image ?? null}
+              alt={it.data.label}
+            />
+          ))}
+        </div>
+        <div class="gallery-col gallery-col--offset">
+          {col1.map((it) => (
+            <PhotoCutout
+              data-reveal
+              width="100%"
+              height={it.data.height ?? 150}
+              rotate={it.data.rotate ?? 1.5}
+              label={it.data.label}
+              src={it.data.image ?? null}
+              alt={it.data.label}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ─── Desktop grid (4-col) ─── */}
+      <div class="gallery-grid-desktop">
+        {dcols.map((col, ci) => (
+          <div class:list={['gallery-dcol', ci % 2 !== 0 ? 'gallery-dcol--offset' : '']}>
+            {col.map((it) => (
+              <PhotoCutout
+                data-reveal
+                width="100%"
+                height={it.data.height ?? 180}
+                rotate={it.data.rotate ?? (ci % 2 === 0 ? -1.5 : 1.5)}
+                label={it.data.label}
+                src={it.data.image ?? null}
+                alt={it.data.label}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+  </GridPaper>
+</Base>
+
+<style>
+  .gallery-root {
+    min-height: 100vh;
+  }
+
+  /* ─── Header ─── */
+  .detail-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1.5px dashed var(--nb-pencil);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .detail-header-left {
+    flex: 1;
+  }
+
+  .detail-header-tag {
+    padding-bottom: 6px;
+  }
+
+  /* ─── Body ─── */
+  .gallery-body {
+    padding: 16px 18px 60px;
+  }
+
+  .gallery-intro {
+    display: block;
+    margin: 0 0 14px;
+  }
+
+  /* ─── Mobile 2-col grid ─── */
+  .gallery-grid-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .gallery-grid-desktop {
+    display: none;
+  }
+
+  .gallery-col {
+    display: grid;
+    gap: 12px;
+  }
+
+  .gallery-col--offset {
+    margin-top: 20px;
+  }
+
+  /* ─── Desktop 4-col grid ─── */
+  @media (min-width: 880px) {
+    .detail-header {
+      padding: 20px 60px 16px;
+      border-bottom-width: 1.8px;
+    }
+
+    .detail-header-tag {
+      padding-bottom: 10px;
+    }
+
+    .gallery-body {
+      padding: 20px 60px 60px;
+    }
+
+    .gallery-intro {
+      font-size: 24px;
+      margin-bottom: 22px;
+    }
+
+    /* Hide mobile grid, show desktop */
+    .gallery-grid-mobile {
+      display: none;
+    }
+
+    .gallery-grid-desktop {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .gallery-dcol {
+      display: grid;
+      gap: 18px;
+    }
+
+    .gallery-dcol--offset {
+      margin-top: 22px;
+    }
+  }
+</style>

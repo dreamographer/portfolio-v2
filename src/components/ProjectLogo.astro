@@ -1,0 +1,27 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  color?: string;
+  letter?: string;
+  size?: number | string;
+  rot?: number;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
+
+const { color = NB.yellow, letter = '?', size = 56, rot = -3, class: className, ...rest } = Astro.props;
+
+const boxSize = cssSize(size);
+const fontSize = typeof size === 'number' ? (size * 0.55) + 'px' : `calc(${size} * 0.55)`;
+---
+
+<div
+  class={className}
+  style={`flex: 0 0 auto; width: ${boxSize}; height: ${boxSize}; background: ${color}; border-radius: 8px; transform: rotate(${rot}deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.12), inset 0 -2px 4px rgba(0,0,0,0.06); position: relative;`}
+  {...rest}
+>
+  <span style={`font-family: "Permanent Marker", cursive; font-size: ${fontSize}; color: ${NB.ink}; line-height: 1;`}>{letter}</span>
+</div>

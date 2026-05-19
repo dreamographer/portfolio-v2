@@ -1,0 +1,51 @@
+---
+import { NB } from '../lib/notebook';
+
+type Direction = 'down' | 'up' | 'left' | 'right' | 'down-left' | 'down-right' | 'up-left' | 'up-right';
+
+interface Props {
+  direction?: Direction;
+  length?: number | string;
+  color?: string;
+  strokeWidth?: number;
+  curve?: number;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
+
+const { direction = 'down', length = 80, color = NB.ink, strokeWidth = 2.2, curve = 0.5, class: className, ...rest } = Astro.props;
+
+const arrows: Record<Direction, string> = {
+  down:         `M40,8 C${40 + curve * 30},30 ${40 - curve * 30},50 40,70 M30,60 L40,72 L50,60`,
+  up:           `M40,72 C${40 + curve * 30},50 ${40 - curve * 30},30 40,10 M30,20 L40,8 L50,20`,
+  left:         `M72,40 C50,${40 + curve * 30} 30,${40 - curve * 30} 10,40 M20,30 L8,40 L20,50`,
+  right:        `M8,40 C30,${40 + curve * 30} 50,${40 - curve * 30} 72,40 M60,30 L72,40 L60,50`,
+  'down-right': `M10,10 C30,30 50,30 68,68 M58,60 L70,72 L60,58`,
+  'down-left':  `M70,10 C50,30 30,30 12,68 M22,60 L10,72 L20,58`,
+  'up-right':   `M10,70 C30,50 50,50 68,12 M58,22 L70,10 L60,12`,
+  'up-left':    `M70,70 C50,50 30,50 12,12 M22,12 L10,10 L20,22`,
+};
+
+const d = arrows[direction as Direction] ?? arrows['down'];
+const svgSize = cssSize(length);
+---
+
+<svg
+  viewBox="0 0 80 80"
+  width={svgSize}
+  height={svgSize}
+  class={className}
+  style="display: block; overflow: visible;"
+  {...rest}
+>
+  <path
+    d={d}
+    fill="none"
+    stroke={color}
+    stroke-width={strokeWidth}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

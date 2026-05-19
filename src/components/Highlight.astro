@@ -1,0 +1,24 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  color?: string;
+  height?: string | number;
+  y?: string | number;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
+
+const { color = NB.yellow, height = '0.7em', y = '0.15em', class: className, ...rest } = Astro.props;
+
+const h = cssSize(height);
+const yPos = cssSize(y);
+---
+
+<span
+  class={className}
+  style={`background-image: linear-gradient(${color}, ${color}); background-repeat: no-repeat; background-position: 0 ${yPos}; background-size: 100% ${h}; padding: 0 2px;`}
+  {...rest}
+><slot /></span>

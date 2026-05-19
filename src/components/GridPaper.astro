@@ -1,0 +1,27 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  size?: number;
+  strong?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { size = 22, strong = false, class: className, ...rest } = Astro.props;
+
+const c = strong ? NB.gridStrong : NB.grid;
+const bg = `
+  linear-gradient(${c} 1px, transparent 1px) 0 0 / ${size}px ${size}px,
+  linear-gradient(90deg, ${c} 1px, transparent 1px) 0 0 / ${size}px ${size}px,
+  ${NB.paper}
+`.trim();
+---
+
+<div
+  class={className}
+  style={`background: ${bg}; position: relative;`}
+  {...rest}
+>
+  <slot />
+</div>

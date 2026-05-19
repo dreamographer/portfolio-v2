@@ -1,0 +1,28 @@
+---
+import { NB } from '../lib/notebook';
+
+interface Props {
+  color?: string;
+  rotate?: number;
+  peel?: boolean;
+  inline?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { color = NB.yellow, rotate = -2, peel = true, inline = false, class: className, ...rest } = Astro.props;
+
+const cls = [
+  'nb-sticky',
+  peel ? 'nb-sticky-peel' : '',
+  className ?? '',
+].filter(Boolean).join(' ');
+---
+
+<span
+  class={cls}
+  style={`background: ${color}; transform: rotate(${rotate}deg); display: ${inline ? 'inline-block' : 'block'};`}
+  {...rest}
+>
+  <span class="nb-sticky-inner"><slot /></span>
+</span>

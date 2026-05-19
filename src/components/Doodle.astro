@@ -1,0 +1,50 @@
+---
+import { NB } from '../lib/notebook';
+
+type DoodleKind = 'star' | 'asterisk' | 'plus' | 'spark' | 'check' | 'heart' | 'arrow' | 'squiggle';
+
+interface Props {
+  kind?: DoodleKind;
+  size?: number | string;
+  color?: string;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
+
+const { kind = 'star', size = 18, color = NB.red, class: className, ...rest } = Astro.props;
+
+const paths: Record<DoodleKind, string> = {
+  star:     'M12,2 L14,9 L21,9 L15,13 L17,20 L12,16 L7,20 L9,13 L3,9 L10,9 Z',
+  asterisk: 'M12,3 L12,21 M4,7 L20,17 M4,17 L20,7',
+  plus:     'M12,4 L12,20 M4,12 L20,12',
+  spark:    'M12,2 L13,11 L22,12 L13,13 L12,22 L11,13 L2,12 L11,11 Z',
+  check:    'M4,12 L10,18 L20,5',
+  heart:    'M12,21 C-4,11 4,1 12,8 C20,1 28,11 12,21 Z',
+  arrow:    'M4,12 L20,12 M14,6 L20,12 L14,18',
+  squiggle: 'M2,12 C5,4 8,20 12,12 C16,4 19,20 22,12',
+};
+
+const filledKinds = new Set<DoodleKind>(['star', 'spark', 'heart']);
+const isFilled = filledKinds.has(kind as DoodleKind);
+const svgSize = cssSize(size);
+---
+
+<svg
+  viewBox="0 0 24 24"
+  width={svgSize}
+  height={svgSize}
+  class={className}
+  style="display: inline-block; overflow: visible;"
+  {...rest}
+>
+  <path
+    d={paths[kind as DoodleKind] ?? paths['star']}
+    fill={isFilled ? color : 'none'}
+    stroke={color}
+    stroke-width={isFilled ? 1.5 : 2.2}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
