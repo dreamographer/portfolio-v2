@@ -12,12 +12,12 @@ interface Props {
 
 const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
 
-const { size = 18, color = NB.ink, weight = 500, as: Tag = 'span', class: className, ...rest } = Astro.props;
+const { size = 18, color = NB.ink, weight = 400, as: Tag = 'span', class: className, ...rest } = Astro.props;
 const fontSize = cssSize(size);
 ---
 
 <Tag
   class={className}
-  style={`font-family: "Caveat", cursive; font-size: ${fontSize}; color: ${color}; line-height: 1.35; font-weight: ${weight};`}
+  style={`font-family: "Kalam", cursive; font-size: ${fontSize}; color: ${color}; line-height: 1.35; font-weight: ${weight};`}
   {...rest}
 ><slot /></Tag>
