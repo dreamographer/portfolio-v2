@@ -41,7 +41,9 @@ const {
     <ClientRouter />
   </head>
   <body>
-    <main transition:animate="fade">
+    {/* animate="none" — Astro swaps instantly; the wavy strip-flip below
+        provides the visual transition. */}
+    <main transition:animate="none">
       <slot />
     </main>
 
@@ -86,6 +88,148 @@ const {
       }
 
       document.addEventListener('astro:page-load', initReveal);
+
+      // Page-flip sound — plays as a navigation begins (still inside the
+      // click gesture, so autoplay policy lets it through). Reused, lazily
+      // created; play() rejection (blocked / no gesture) is swallowed.
+      let flipAudio: HTMLAudioElement | null = null;
+      function playFlip() {
+        try {
+          if (!flipAudio) {
+            flipAudio = new Audio('/page-flip-sound.mp3');
+            flipAudio.preload = 'auto';
+            flipAudio.volume = 0.55;
+          }
+          flipAudio.currentTime = 0;
+          flipAudio.play().catch(() => {});
+        } catch {
+          /* no-op */
+        }
+      }
+      document.addEventListener('astro:before-preparation', playFlip);
+
+      // ---- Wavy page-flip ------------------------------------------------
+      // The page is cloned into vertical strips that turn on the shared
+      // spine with a staggered delay, so a curl ripples across the sheet
+      // like a real page being turned.
+      //   Forward (into a deeper page): the OLD page curls away to reveal
+      //     the new page beneath.
+      //   Back (toward home / a shallower page): the destination page folds
+      //     IN over the page you were on — like turning the page back.
+      const FLIP_STRIPS = 12;
+      const FLIP_STAGGER = 24; // ms between neighbouring strips
+      const FLIP_DURATION = 660; // keep in sync with .nb-flip-strip animation
+
+      // Depth = number of path segments; a shallower destination = "back".
+      const pathDepth = (path: string) => path.split('/').filter(Boolean).length;
+
+      const cloneMain = () => {
+        const main = document.querySelector('main');
+        if (!main) return null;
+        const node = main.cloneNode(true) as HTMLElement;
+        node.querySelectorAll('script').forEach((s) => s.remove());
+        return node;
+      };
+
+      let flipCapture:
+        | { node: HTMLElement; scrollY: number; back: boolean }
+        | null = null;
+
+      // Snapshot the outgoing page and decide direction. The before-swap
+      // event carries Astro-computed from/to URLs (timing-independent):
+      // a shallower destination than the origin = a "back" navigation.
+      document.addEventListener('astro:before-swap', (e) => {
+        flipCapture = null;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const node = cloneMain();
+        if (!node) return;
+        const ev = e as unknown as { from?: URL; to?: URL };
+        const back =
+          !!ev.from &&
+          !!ev.to &&
+          pathDepth(ev.to.pathname) < pathDepth(ev.from.pathname);
+        flipCapture = { node, scrollY: window.scrollY, back };
+      });
+
+      // After the swap, build the strip overlay and run the curl.
+      document.addEventListener('astro:after-swap', () => {
+        const cap = flipCapture;
+        flipCapture = null;
+        if (!cap) return;
+
+        document.querySelectorAll('.nb-flip-overlay').forEach((o) => o.remove());
+
+        const vw = document.documentElement.clientWidth;
+        const sw = vw / FLIP_STRIPS;
+        const back = cap.back;
+
+        const overlay = document.createElement('div');
+        overlay.className = back
+          ? 'nb-flip-overlay nb-flip-overlay--back'
+          : 'nb-flip-overlay';
+
+        // Forward: strips show the OLD page, curling away.
+        // Back: strips show the NEW (live) page folding in, over a static
+        //       backdrop of the OLD page.
+        let stripNode: HTMLElement;
+        let stripScrollY: number;
+
+        if (back) {
+          const backdrop = document.createElement('div');
+          backdrop.className = 'nb-flip-backdrop';
+          const bwrap = document.createElement('div');
+          bwrap.className = 'nb-flip-page';
+          bwrap.style.width = vw + 'px';
+          bwrap.style.left = '0px';
+          bwrap.style.top = -cap.scrollY + 'px';
+          cap.node.style.width = vw + 'px';
+          bwrap.appendChild(cap.node);
+          backdrop.appendChild(bwrap);
+          overlay.appendChild(backdrop);
+
+          stripNode = cloneMain() ?? cap.node;
+          stripScrollY = window.scrollY;
+        } else {
+          stripNode = cap.node;
+          stripScrollY = cap.scrollY;
+        }
+
+        for (let i = 0; i < FLIP_STRIPS; i++) {
+          // Forward: held (right) edge leads. Back: spine side leads.
+          const order = back ? i : FLIP_STRIPS - 1 - i;
+          const delay = order * FLIP_STAGGER + 'ms';
+
+          const strip = document.createElement('div');
+          strip.className = 'nb-flip-strip';
+          strip.style.left = i * sw + 'px';
+          strip.style.width = Math.ceil(sw) + 1 + 'px';
+          strip.style.transformOrigin = -i * sw + 'px 50%';
+          strip.style.animationDelay = delay;
+
+          const page = stripNode.cloneNode(true) as HTMLElement;
+          page.style.width = vw + 'px';
+
+          const wrap = document.createElement('div');
+          wrap.className = 'nb-flip-page';
+          wrap.style.width = vw + 'px';
+          wrap.style.left = -i * sw + 'px';
+          wrap.style.top = -stripScrollY + 'px';
+          wrap.appendChild(page);
+
+          const shade = document.createElement('div');
+          shade.className = 'nb-flip-shade';
+          shade.style.animationDelay = delay;
+
+          strip.appendChild(wrap);
+          strip.appendChild(shade);
+          overlay.appendChild(strip);
+        }
+
+        document.body.appendChild(overlay);
+
+        const life = FLIP_DURATION + (FLIP_STRIPS - 1) * FLIP_STAGGER + 90;
+        window.setTimeout(() => overlay.remove(), life);
+      });
     </script>
   </body>
 </html>

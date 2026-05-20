@@ -3,16 +3,39 @@
   "firstName": "Ashwin",
   "greeting": "hi, I'm",
   "tagline": [
-    { "text": "a ", "highlight": "" },
-    { "text": "senior frontend engineer", "highlight": "yellow" },
-    { "text": ", ", "highlight": "" },
-    { "text": "self-taught", "highlight": "pink" },
-    { "text": " & building for the web.", "highlight": "" }
+    {
+      "text": "a ",
+      "highlight": ""
+    },
+    {
+      "text": "senior frontend engineer",
+      "highlight": "yellow"
+    },
+    {
+      "text": ", ",
+      "highlight": ""
+    },
+    {
+      "text": "self-taught",
+      "highlight": "pink"
+    },
+    {
+      "text": " & building for the web.",
+      "highlight": ""
+    }
   ],
   "status": "open to work",
-  "photo": null,
+  "photo": "/media/ChatGPT Image May 20, 2026, 01_04_32 AM.png",
   "photoCaption": "that's me, says hi",
-  "tags": ["self-taught", "curious", "fast", "kind", "detail-obsessed", "react", "typescript"],
+  "tags": [
+    "self-taught",
+    "curious",
+    "fast",
+    "kind",
+    "detail-obsessed",
+    "react",
+    "typescript"
+  ],
   "bio": "I write code for the web. I care about fast pages, calm interfaces, and details that make people smile. Mostly self-taught — the internet was my classroom, curiosity is my main skill, and I've shipped a few things I'm proud of since.",
   "contacts": [
     {

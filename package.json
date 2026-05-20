@@ -11,11 +11,16 @@
     "tina:dev": "tinacms dev -c \"astro dev\"",
     "tina:build": "tinacms build && astro build"
   },
-  "keywords": ["portfolio", "astro", "tinacms"],
+  "keywords": [
+    "portfolio",
+    "astro",
+    "tinacms"
+  ],
   "author": "Ashwin KV",
   "license": "MIT",
   "dependencies": {
-    "astro": "^6.3.5"
+    "astro": "^6.3.5",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@tinacms/cli": "^2.3.1",
