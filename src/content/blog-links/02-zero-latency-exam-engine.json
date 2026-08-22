@@ -5,5 +5,5 @@
   "tag": "frontend",
   "readMinutes": 4,
   "excerpt": "An LMS academics module that had to render huge question papers — hundreds of markdown questions per exam — without the UI ever stalling. The architecture decisions that got it there.",
-  "featured": true
+  "featured": false
 }

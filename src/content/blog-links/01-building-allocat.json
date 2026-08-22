@@ -1,0 +1,9 @@
+{
+  "date": "2026-05-13",
+  "title": "Building AlloCat",
+  "url": "https://www.octane.team/writing/building-allocat",
+  "tag": "product",
+  "readMinutes": 4,
+  "excerpt": "From a single Google Keep note to an open-source personal finance planner. Why AlloCat plans the future instead of tracking the past, why it shipped as a PWA, and how the cat got into the name.",
+  "featured": true
+}
