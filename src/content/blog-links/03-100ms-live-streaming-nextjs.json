@@ -1,0 +1,9 @@
+{
+  "date": "2025-06-21",
+  "title": "Integrating 100ms live react-sdk for live streaming in Next.js",
+  "url": "https://medium.com/@ashwinkv.akv/integrating-100ms-live-react-sdk-for-live-streaming-in-next-js-2214c5add663",
+  "tag": "nextjs",
+  "readMinutes": 14,
+  "excerpt": "A full walkthrough of wiring the 100ms React SDK into a Next.js app — WebRTC rooms for low-latency calls, HLS for broadcast-scale streaming, and the setup details in between.",
+  "featured": false
+}

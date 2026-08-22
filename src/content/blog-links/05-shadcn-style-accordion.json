@@ -1,0 +1,9 @@
+{
+  "date": "2025-02-27",
+  "title": "Building a Shadcn-Style Accordion in React: SEO-Friendly and Animated with <details> and WAAPI",
+  "url": "https://medium.com/@ashwinkv.akv/building-a-shadcn-style-accordion-in-react-seo-friendly-and-animated-with-details-and-waapi-d8193569e88b",
+  "tag": "react",
+  "readMinutes": 6,
+  "excerpt": "Shadcn's accordion hides its content from crawlers. Rebuilding it on native <details> plus the Web Animations API keeps the animation and the SEO.",
+  "featured": false
+}
