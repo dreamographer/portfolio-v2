@@ -1,0 +1,9 @@
+{
+  "date": "2026-03-02",
+  "title": "How We Built a Zero-Latency Exam Engine That Feels Native",
+  "url": "https://medium.com/@ashwinkv.akv/how-we-built-a-zero-latency-exam-engine-that-feels-native-62d99f731e43",
+  "tag": "frontend",
+  "readMinutes": 4,
+  "excerpt": "An LMS academics module that had to render huge question papers — hundreds of markdown questions per exam — without the UI ever stalling. The architecture decisions that got it there.",
+  "featured": true
+}
