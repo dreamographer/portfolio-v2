@@ -1,5 +1,5 @@
 ---
-// Base layout — <head>, fonts, global styles, cross-page transitions.
+// Base layout: <head>, fonts, global styles, cross-page transitions.
 // Every page wraps its content in this. The page body content should be a
 // single GridPaper so the notebook paper fills the viewport.
 import { ClientRouter } from 'astro:transitions';
@@ -11,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = 'Ashwin KV — Portfolio',
-  description = 'Ashwin KV — senior frontend engineer, self-taught, building for the web.',
+  title = 'Ashwin KV · Portfolio',
+  description = 'Ashwin KV, senior frontend engineer, self-taught, building for the web.',
 } = Astro.props;
 ---
 
@@ -41,7 +41,7 @@ const {
     <ClientRouter />
   </head>
   <body>
-    {/* animate="none" — Astro swaps instantly; the wavy strip-flip below
+    {/* animate="none": Astro swaps instantly; the wavy strip-flip below
         provides the visual transition. */}
     <main transition:animate="none">
       <slot />
@@ -89,7 +89,7 @@ const {
 
       document.addEventListener('astro:page-load', initReveal);
 
-      // Page-flip sound — plays as a navigation begins (still inside the
+      // Page-flip sound: plays as a navigation begins (still inside the
       // click gesture, so autoplay policy lets it through). Reused, lazily
       // created; play() rejection (blocked / no gesture) is swallowed.
       let flipAudio: HTMLAudioElement | null = null;
@@ -115,7 +115,7 @@ const {
       //   Forward (into a deeper page): the OLD page curls away to reveal
       //     the new page beneath.
       //   Back (toward home / a shallower page): the destination page folds
-      //     IN over the page you were on — like turning the page back.
+      //     IN over the page you were on, like turning the page back.
       const FLIP_STRIPS = 12;
       const FLIP_STAGGER = 24; // ms between neighbouring strips
       const FLIP_DURATION = 660; // keep in sync with .nb-flip-strip animation

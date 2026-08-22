@@ -1,7 +1,7 @@
-# Implementation Contract — Ashwin KV Portfolio (Astro + TinaCMS)
+# Implementation Contract: Ashwin KV Portfolio (Astro + TinaCMS)
 
 This is the shared contract every implementation agent builds against. Do not
-deviate from the component APIs, content field names, or file paths below —
+deviate from the component APIs, content field names, or file paths below;
 other agents depend on them.
 
 ## Source of truth
@@ -9,10 +9,10 @@ other agents depend on them.
 The visual design is the Claude Design handoff in `design-reference/project/`.
 Recreate it **pixel-faithfully** in Astro. Key files:
 
-- `notebook.jsx` — primitive components + the design system (colors/fonts).
-- `home-a.jsx` — mobile home (390 wide).
-- `desktop.jsx` — desktop home + desktop detail pages (1280 wide).
-- `details.jsx` — mobile detail pages (Projects, Gallery, Blog, Case study).
+- `notebook.jsx`: primitive components + the design system (colors/fonts).
+- `home-a.jsx`: mobile home (390 wide).
+- `desktop.jsx`: desktop home + desktop detail pages (1280 wide).
+- `details.jsx`: mobile detail pages (Projects, Gallery, Blog, Case study).
 
 Each page must be **one responsive page** that looks like the mobile design on
 narrow screens and the desktop design on wide screens. Do NOT ship two separate
@@ -44,12 +44,12 @@ artboards.
 
 ```
 src/
-  lib/notebook.ts            (done — tokens)
-  styles/global.css          (done — shared CSS)
-  layouts/Base.astro         (done — head/fonts/transitions; props: title, description)
+  lib/notebook.ts            (done: tokens)
+  styles/global.css          (done: shared CSS)
+  layouts/Base.astro         (done: head/fonts/transitions; props: title, description)
   components/                (AGENT: components)
   content.config.ts          (AGENT: content)
-  content/                   (AGENT: content — sample entries)
+  content/                   (AGENT: content: sample entries)
   pages/
     index.astro              (AGENT: home)
     projects.astro           (AGENT: projects)
@@ -59,7 +59,7 @@ src/
 tina/config.ts               (AGENT: content)
 ```
 
-## Component API — `src/components/*.astro`
+## Component API: `src/components/*.astro`
 
 Every component: accept an optional `class` prop and spread any extra
 attributes onto the root element. `size` props accept a **number** (→ `px`) or
@@ -86,98 +86,98 @@ The components agent ports these 1:1 from `notebook.jsx` / `details.jsx`
 whichever is cleaner. Hover/animation behavior already lives in `global.css`
 (`.nb-sticky`, `.nb-photo`, `.nb-link`, `.nb-page-enter`).
 
-## Content collections — `src/content.config.ts`
+## Content collections: `src/content.config.ts`
 
 Astro 5 content layer. Use `glob` from `astro/loaders`. All content lives under
-`src/content/`. Field names below are FINAL — page agents code against them.
+`src/content/`. Field names below are FINAL; page agents code against them.
 
-### `profile` — glob `src/content/profile/*.json` (singleton: one file `main.json`)
-- `name` string — "Ashwin KV"
-- `firstName` string — "Ashwin"
-- `greeting` string — "hi, I'm"
+### `profile`: glob `src/content/profile/*.json` (singleton: one file `main.json`)
+- `name` string: "Ashwin KV"
+- `firstName` string: "Ashwin"
+- `greeting` string: "hi, I'm"
 - `tagline` array of `{ text: string, highlight: '' | 'yellow' | 'pink' | 'green' }`
-  — rendered as flowing text; segments with a highlight get `<Highlight>`.
-- `status` string — "open to work"
-- `photo` string | null — image path; null → placeholder
-- `photoCaption` string — "that's me, says hi"
-- `tags` string[] — pill words (self-taught, curious, fast, …)
-- `bio` string — long paragraph
+rendered as flowing text; segments with a highlight get `<Highlight>`.
+- `status` string: "open to work"
+- `photo` string | null: image path; null → placeholder
+- `photoCaption` string: "that's me, says hi"
+- `tags` string[]: pill words (self-taught, curious, fast, …)
+- `bio` string: long paragraph
 - `contacts` array of `{ icon: string, label: string, url: string, sub: string, color: 'yellow'|'pink'|'blue'|'green' }`
 - `footerNote` string
 
-### `experience` — glob `src/content/experience/*.json`
+### `experience`: glob `src/content/experience/*.json`
 - `order` number · `year` string ("2023 / NOW") · `role` string · `place` string · `desc` string
 
-### `education` — glob `src/content/education/*.json`
+### `education`: glob `src/content/education/*.json`
 - same shape as `experience`
 
-### `skills` — glob `src/content/skills/*.json`
+### `skills`: glob `src/content/skills/*.json`
 - `order` number · `label` string
 
-### `projects` — glob `src/content/projects/*.md` (markdown frontmatter)
+### `projects`: glob `src/content/projects/*.md` (markdown frontmatter)
 - `order` number
 - `title` string · `tag` string ("Web app · 2024") · `year` string ("2024")
 - `logoColor` enum `yellow|pink|blue|green`
-- `summary` string — short card description
+- `summary` string: short card description
 - `stack` string[]
-- `featured` boolean — featured ones surface on the home "Featured Work" section
-- `subtitle` string — case-study one-liner
+- `featured` boolean: featured ones surface on the home "Featured Work" section
+- `subtitle` string: case-study one-liner
 - `caseStudy` object:
   - `role` string · `stackLabel` string · `time` string · `status` string  (the meta strip)
   - `overview` string · `problem` string · `outcome` string
-  - `approach` string[] — numbered approach list
+  - `approach` string[]: numbered approach list
   - `stats` array of `{ n: string, label: string }`
-  - `processShots` number (default 4) — count of placeholder process images
+  - `processShots` number (default 4): count of placeholder process images
 - markdown body: optional, unused by templates for now.
 
-### `blogLinks` — glob `src/content/blog-links/*.json`
-- `date` string — ISO date "2026-05-12"
+### `blogLinks`: glob `src/content/blog-links/*.json`
+- `date` string: ISO date "2026-05-12"
 - `title` string
-- `url` string — **external** link (Medium/dev.to/etc); opens in new tab
-- `tag` string — single tag ("css", "react", "meta"…)
+- `url` string: **external** link (Medium/dev.to/etc); opens in new tab
+- `tag` string: single tag ("css", "react", "meta"…)
 - `readMinutes` number
-- `excerpt` string optional — shown on the featured post
-- `featured` boolean — the one featured post on /blog
+- `excerpt` string optional: shown on the featured post
+- `featured` boolean: the one featured post on /blog
 
-### `gallery` — glob `src/content/gallery/*.json`
+### `gallery`: glob `src/content/gallery/*.json`
 - `order` number
-- `image` string | null — null → striped placeholder
+- `image` string | null: null → striped placeholder
 - `label` string
-- `rotate` number optional — tilt in deg
-- `height` number optional — masonry tile height
+- `rotate` number optional: tilt in deg
+- `height` number optional: masonry tile height
 
 The content agent also creates **sample entries** matching the design
 placeholders (3 experience, 2 education, ~6 skills, 6 projects with full case
 studies, ~8 blog links, ~12 gallery items, 1 profile).
 
-## TinaCMS — `tina/config.ts`
+## TinaCMS: `tina/config.ts`
 
 Configure TinaCMS schema mirroring the collections above (md for `projects`,
 json for the rest). Use env vars `TINA_CLIENT_ID`, `TINA_TOKEN`,
 `TINA_BRANCH`. Build output folder `admin`, public folder `public`. Add npm
 scripts `dev`/`build` that wrap Astro with `tinacms dev`/`tinacms build`. Local
-editing works without Tina Cloud; production admin needs the cloud client id —
+editing works without Tina Cloud; production admin needs the cloud client id;
 note that in `README.md`.
 
-## Pages — behavior
+## Pages: behavior
 
 All pages wrap content in `Base.astro` → one `GridPaper`.
 
-- **`index.astro`** — single scrolling home. Sections in order: Hero, Bio,
+- **`index.astro`**: single scrolling home. Sections in order: Hero, Bio,
   Experience, Education, Good At (skills), Featured Work (featured projects, or
   first 3), Gallery preview (first 4), Mini Blog (latest 4 blogLinks), Contact +
   footer. Desktop shows a top nav (work/gallery/writing/contact). "see all
   projects →" → `/projects`, "open gallery →" → `/gallery`, "all posts →" →
   `/blog`, contact → `#contact`.
-- **`projects.astro`** — header ("Projects.", "← back to home" → `/`), intro
+- **`projects.astro`**: header ("Projects.", "← back to home" → `/`), intro
   line, responsive grid of all projects (1-col cards on mobile, 3-col on
   desktop), each card → `/projects/<slug>`.
-- **`projects/[slug].astro`** — `getStaticPaths` over `projects`. Case study:
+- **`projects/[slug].astro`**: `getStaticPaths` over `projects`. Case study:
   title block, hero image, meta strip, overview/problem/approach/outcome blocks,
   process shots, stats, "← back to projects" → `/projects`.
-- **`gallery.astro`** — header, intro, masonry photo grid (2-col mobile, 4-col
+- **`gallery.astro`**: header, intro, masonry photo grid (2-col mobile, 4-col
   desktop) from `gallery`.
-- **`blog.astro`** — header, intro, tag chips, one featured post (with excerpt),
+- **`blog.astro`**: header, intro, tag chips, one featured post (with excerpt),
   then the rest as a dated list. Every post title links to its external `url`
   (`target="_blank" rel="noopener noreferrer"`).
 

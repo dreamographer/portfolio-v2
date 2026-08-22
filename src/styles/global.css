@@ -1,4 +1,4 @@
-/* Global notebook styles — ported from the Claude Design handoff
+/* Global notebook styles: ported from the Claude Design handoff
    (design-reference/project/notebook.jsx injectStyles + Portfolio.html).
    Component-scoped styles live in each .astro file; this holds the shared
    resets, hover/animation behavior, and font fallbacks. */
@@ -12,7 +12,7 @@
   --nb-pink: #ffc9d4;
   --nb-blue: #bcdfff;
   --nb-green: #c6efb0;
-  /* page horizontal padding — small on mobile, generous on desktop */
+  /* page horizontal padding: small on mobile, generous on desktop */
   --nb-pad: 22px;
 }
 
@@ -32,7 +32,7 @@ html, body {
 html {
   scroll-behavior: smooth;
   /* Clip stray horizontal overflow (rotated stickies, decorations) without
-     creating a scroll container. Kept on <html> only — putting overflow on
+     creating a scroll container. Kept on <html> only; putting overflow on
      <body> risks viewport propagation and a second scrollbar. */
   overflow-x: clip;
 }
@@ -143,7 +143,7 @@ a { color: inherit; }
    done, so component hover transitions are unaffected afterward. */
 html.js [data-reveal] {
   opacity: 0;
-  /* translateY only — no rotate. Rotating full-width blocks pushes their
+  /* translateY only, no rotate. Rotating full-width blocks pushes their
      corners past the viewport and triggers a horizontal scrollbar. */
   transform: translateY(24px);
   transition:
@@ -165,7 +165,7 @@ html.js [data-reveal].is-revealed {
 /* ---------- Wavy page-flip overlay (book page turn) ----------
    The script in Base.astro clones the outgoing page into vertical strips.
    Each strip turns on the shared spine (left edge) with a staggered delay,
-   so the sheet bends and a curl ripples across it like real paper —
+   so the sheet bends and a curl ripples across it like real paper,
    instead of one rigid plane rotating. */
 .nb-flip-overlay {
   position: fixed;
@@ -200,13 +200,13 @@ html.js [data-reveal].is-revealed {
   z-index: 0;
 }
 
-/* The cloned page slice — positioned so each strip shows its own column. */
+/* The cloned page slice, positioned so each strip shows its own column. */
 .nb-flip-page {
   position: absolute;
   top: 0;
 }
 
-/* Per-strip shading — darkens as the strip turns edge-on; staggered with
+/* Per-strip shading: darkens as the strip turns edge-on; staggered with
    the strip, so light rakes across the curl. */
 .nb-flip-shade {
   position: absolute;

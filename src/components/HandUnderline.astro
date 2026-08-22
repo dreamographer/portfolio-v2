@@ -13,7 +13,7 @@ const cssSize = (v: string | number) => typeof v === 'number' ? v + 'px' : v;
 
 const { width = 120, color = NB.ink, strokeWidth = 2.5, class: className, ...rest } = Astro.props;
 
-// Three slightly-different paths — use the first one at build time
+// Three slightly-different paths; use the first one at build time
 // (runtime random not possible in static Astro; use a fixed path)
 const path = 'M2,7 C30,4 60,9 90,5 C110,3 130,8 158,5';
 

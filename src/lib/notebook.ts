@@ -1,4 +1,4 @@
-// Notebook design tokens — ported verbatim from the Claude Design handoff
+// Notebook design tokens, ported verbatim from the Claude Design handoff
 // (design-reference/project/notebook.jsx). Single source of truth for
 // colors used across all notebook components and pages.
 
@@ -18,7 +18,7 @@ export const NB = {
   redInk: 'oklch(0.48 0.18 25)',
 } as const;
 
-// Named sticky-note / logo colors — used by content (logoColor field) so the
+// Named sticky-note / logo colors, used by content (logoColor field) so the
 // CMS can pick a swatch by name instead of a raw hex value.
 export const SWATCHES: Record<string, string> = {
   yellow: NB.yellow,

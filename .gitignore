@@ -22,3 +22,9 @@ npm-debug.log*
 
 # kept for reference, not part of the app
 # design-reference/  (committed intentionally as a design handoff record)
+
+# gallery originals (full-size, EXIF intact); web copies live in public/media/gallery/
+media-originals/
+
+# claude code local state (contains git worktrees)
+.claude/

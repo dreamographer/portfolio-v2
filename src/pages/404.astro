@@ -1,0 +1,325 @@
+---
+import Base from '../layouts/Base.astro';
+import GridPaper from '../components/GridPaper.astro';
+import Hand from '../components/Hand.astro';
+import HandLink from '../components/HandLink.astro';
+import HandArrow from '../components/HandArrow.astro';
+import Marker from '../components/Marker.astro';
+import Mono from '../components/Mono.astro';
+import StickyNote from '../components/StickyNote.astro';
+import Doodle from '../components/Doodle.astro';
+import Highlight from '../components/Highlight.astro';
+import { NB } from '../lib/notebook';
+---
+
+<Base
+  title="404: Page Missing · Ashwin KV"
+  description="That page isn't in this notebook. Looks like a torn-out leaf."
+>
+  <GridPaper size={22} class="nf-root">
+
+    {/* Torn edge along the top: page ripped from notebook */}
+    <div class="nf-torn" aria-hidden="true"></div>
+
+    {/* Header */}
+    <header class="nf-header">
+      <HandLink href="/" color={NB.pencil}>
+        <Hand size={18} color={NB.pencil}>← back to home</Hand>
+      </HandLink>
+      <Mono size={9} class="nf-header-tag">ashwin.kv / 404</Mono>
+    </header>
+
+    <section class="nf-body">
+
+      {/* Margin scribble */}
+      <div class="nf-margin-mono">
+        <Mono size={10} color={NB.pencil}>// page_not_found.exe</Mono>
+      </div>
+
+      {/* Big 404 */}
+      <div class="nf-hero">
+        <Marker
+          size={"clamp(120px, 28vw, 280px)"}
+          color={NB.redInk}
+          as="div"
+          class="nf-404"
+        >404</Marker>
+
+        <Doodle kind="asterisk" size={36} color={NB.red} class="nf-spark nf-spark-1" />
+        <Doodle kind="spark" size={44} color={NB.red} class="nf-spark nf-spark-2" />
+        <Doodle kind="star" size={28} color={NB.ink} class="nf-spark nf-spark-3" />
+
+        {/* Strikethrough sticky over the number */}
+        <StickyNote color={NB.yellow} rotate={-8} class="nf-sticky">
+          <Hand size={20} weight={700} as="div">torn out!</Hand>
+          <Hand size={16} color={NB.pencil} as="div">page missing</Hand>
+        </StickyNote>
+      </div>
+
+      {/* Headline */}
+      <div class="nf-headline">
+        <Marker size={"clamp(34px, 5vw, 56px)"} as="h1" class="nf-h1">
+          This page isn't in the notebook.
+        </Marker>
+
+        <Hand size={"clamp(20px, 2.2vw, 26px)"} color={NB.inkSoft} as="p" class="nf-sub">
+          Maybe a&nbsp;
+          <Highlight color={NB.pink} height="0.65em">link broke</Highlight>
+          , maybe I&nbsp;
+          <Highlight color={NB.blue} height="0.65em">ripped the page out</Highlight>
+          , maybe the URL has a typo. Either way, this leaf is blank.
+        </Hand>
+      </div>
+
+      {/* Suggestions */}
+      <div class="nf-cards">
+        <a href="/" class="nf-card-link">
+          <StickyNote color={NB.yellow} rotate={-3}>
+            <div class="nf-card-inner">
+              <Mono size={9}>HOME</Mono>
+              <Hand size={22} weight={600} as="div">go back to start</Hand>
+              <Hand size={16} color={NB.pencil} as="div">the cover page →</Hand>
+            </div>
+          </StickyNote>
+        </a>
+
+        <a href="/projects" class="nf-card-link">
+          <StickyNote color={NB.pink} rotate={2}>
+            <div class="nf-card-inner">
+              <Mono size={9}>WORK</Mono>
+              <Hand size={22} weight={600} as="div">see the projects</Hand>
+              <Hand size={16} color={NB.pencil} as="div">stuff I built →</Hand>
+            </div>
+          </StickyNote>
+        </a>
+
+        <a href="/gallery" class="nf-card-link">
+          <StickyNote color={NB.blue} rotate={-1.5}>
+            <div class="nf-card-inner">
+              <Mono size={9}>GALLERY</Mono>
+              <Hand size={22} weight={600} as="div">flip the photos</Hand>
+              <Hand size={16} color={NB.pencil} as="div">moments &amp; sketches →</Hand>
+            </div>
+          </StickyNote>
+        </a>
+
+        <a href="/blog" class="nf-card-link">
+          <StickyNote color={NB.green} rotate={2.5}>
+            <div class="nf-card-inner">
+              <Mono size={9}>WRITING</Mono>
+              <Hand size={22} weight={600} as="div">read the notes</Hand>
+              <Hand size={16} color={NB.pencil} as="div">scribbles &amp; logs →</Hand>
+            </div>
+          </StickyNote>
+        </a>
+      </div>
+
+      {/* Hand-drawn arrow + back link */}
+      <div class="nf-back-row">
+        <HandArrow direction="up-left" length={70} class="nf-back-arrow" />
+        <HandLink href="/" color={NB.redInk}>
+          <Hand size={"clamp(22px, 2.4vw, 28px)"} color={NB.redInk}>take me home →</Hand>
+        </HandLink>
+      </div>
+
+      {/* Footer scribble */}
+      <footer class="nf-footer">
+        <Mono size={9} color={NB.pencil}>HTTP 404 · resource not found</Mono>
+        <Hand size={20} color={NB.pencil}>end of torn page ✦</Hand>
+      </footer>
+    </section>
+
+  </GridPaper>
+</Base>
+
+<style>
+  .nf-root {
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: 100vh;
+    overflow-x: clip;
+    position: relative;
+  }
+
+  /* Torn paper top edge */
+  .nf-torn {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0 7px,
+      rgba(0, 0, 0, 0.05) 7px 9px,
+      transparent 9px 14px,
+      rgba(0, 0, 0, 0.03) 14px 17px
+    );
+    pointer-events: none;
+  }
+
+  .nf-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1.5px dashed var(--nb-pencil);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .nf-header-tag {
+    padding-bottom: 6px;
+  }
+
+  .nf-body {
+    padding: 28px 18px 60px;
+    position: relative;
+  }
+
+  .nf-margin-mono {
+    margin-bottom: 8px;
+  }
+
+  /* ── Hero block: big 404 with overlays ───────────────────────────────── */
+  .nf-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 0 16px;
+    margin-bottom: 8px;
+  }
+
+  .nf-404 {
+    display: block;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    transform: rotate(-2deg);
+    text-shadow: 3px 4px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  .nf-spark {
+    position: absolute;
+  }
+
+  .nf-spark-1 { top: 6%;  left: 12%;  transform: rotate(-14deg); }
+  .nf-spark-2 { top: 18%; right: 14%; transform: rotate(18deg); }
+  .nf-spark-3 { bottom: 8%; left: 22%; transform: rotate(8deg); }
+
+  .nf-sticky {
+    position: absolute;
+    top: 8%;
+    right: 6%;
+    padding: 10px 14px 12px !important;
+    max-width: 180px;
+  }
+
+  /* ── Headline ─────────────────────────────────────────────────────────── */
+  .nf-headline {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 6px;
+  }
+
+  .nf-h1 {
+    display: block;
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  .nf-sub {
+    display: block;
+    margin: 14px auto 0;
+    max-width: 620px;
+    line-height: 1.5;
+  }
+
+  /* ── Suggestion cards ─────────────────────────────────────────────────── */
+  .nf-cards {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .nf-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+
+  .nf-card-link:hover {
+    transform: translateY(-3px) rotate(-0.6deg);
+  }
+
+  .nf-card-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 2px;
+  }
+
+  /* ── Back row ─────────────────────────────────────────────────────────── */
+  .nf-back-row {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+  }
+
+  .nf-back-arrow {
+    transform: rotate(-8deg);
+  }
+
+  /* ── Footer ───────────────────────────────────────────────────────────── */
+  .nf-footer {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1.5px dashed var(--nb-pencil);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+
+  /* ── Desktop ──────────────────────────────────────────────────────────── */
+  @media (min-width: 880px) {
+    .nf-header {
+      padding: 20px 60px 16px;
+    }
+
+    .nf-body {
+      padding: 40px 60px 70px;
+    }
+
+    .nf-hero {
+      padding: 40px 0 28px;
+    }
+
+    .nf-sticky {
+      top: 12%;
+      right: 12%;
+      max-width: 220px;
+    }
+
+    .nf-cards {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 50px;
+      max-width: 100%;
+    }
+
+    .nf-footer {
+      margin-top: 60px;
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+  }
+</style>

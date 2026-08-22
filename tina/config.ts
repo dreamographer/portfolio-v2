@@ -1,7 +1,7 @@
 import { defineConfig } from 'tinacms';
 
 export default defineConfig({
-  // Tina Cloud credentials — set these in .env for production.
+  // Tina Cloud credentials: set these in .env for production.
   // Local editing works without them (uses local filesystem bridge).
   clientId: process.env.TINA_CLIENT_ID ?? '',
   token: process.env.TINA_TOKEN ?? '',
@@ -91,6 +91,7 @@ export default defineConfig({
           { type: 'string', name: 'role', label: 'Role / title' },
           { type: 'string', name: 'place', label: 'Place / company' },
           { type: 'string', name: 'desc', label: 'Description', ui: { component: 'textarea' } },
+          { type: 'string', name: 'url', label: 'Company website (optional)' },
         ],
       },
 
@@ -147,6 +148,24 @@ export default defineConfig({
           },
           { type: 'boolean', name: 'featured', label: 'Featured on home page' },
           { type: 'string', name: 'subtitle', label: 'Case study one-liner' },
+          { type: 'string', name: 'heroImage', label: 'Hero screenshot (URL or /media path)' },
+          {
+            type: 'object',
+            name: 'links',
+            label: 'Links',
+            fields: [
+              { type: 'string', name: 'live', label: 'Live site' },
+              { type: 'string', name: 'github', label: 'GitHub repo' },
+              { type: 'string', name: 'linkedin', label: 'LinkedIn post' },
+              { type: 'string', name: 'playStore', label: 'Google Play listing' },
+            ],
+          },
+          {
+            type: 'string',
+            name: 'features',
+            label: 'Feature list',
+            list: true,
+          },
           {
             type: 'object',
             name: 'caseStudy',

@@ -1,4 +1,4 @@
-# Ashwin KV — Portfolio
+# Ashwin KV Portfolio
 
 A notebook-style personal portfolio. Built with **Astro** (static site) and
 content editable through **TinaCMS** (no-code web dashboard, git-backed).
@@ -7,9 +7,9 @@ Implemented from the Claude Design handoff in `design-reference/`.
 
 ## Stack
 
-- **Astro 6** — static site generator. Near-zero JS, fast, free to host.
-- **Content collections** — all content lives as Markdown/JSON in `src/content/`.
-- **TinaCMS** — web dashboard for editing that content with no code.
+- **Astro 6**: static site generator. Near-zero JS, fast, free to host.
+- **Content collections**: all content lives as Markdown/JSON in `src/content/`.
+- **TinaCMS**: web dashboard for editing that content with no code.
 
 ## Develop
 
@@ -37,19 +37,19 @@ design-reference/  original Claude Design handoff (kept for reference)
 
 ## Editing content
 
-### Option A — edit files directly
+### Option A: edit files directly
 Content is plain Markdown/JSON under `src/content/`:
 
-- `profile/main.json` — name, tagline, bio, photo, contacts, footer
-- `experience/*.json`, `education/*.json` — timeline rows
-- `skills/*.json` — "Good At" list
-- `projects/*.md` — projects + their case studies (frontmatter)
-- `blog-links/*.json` — external blog links (title + URL)
-- `gallery/*.json` — gallery tiles
+- `profile/main.json`: name, tagline, bio, photo, contacts, footer
+- `experience/*.json`, `education/*.json`: timeline rows
+- `skills/*.json`: "Good At" list
+- `projects/*.md`: projects + their case studies (frontmatter)
+- `blog-links/*.json`: external blog links (title + URL)
+- `gallery/*.json`: gallery tiles
 
 Edit, save, rebuild.
 
-### Option B — TinaCMS dashboard (no-code)
+### Option B: TinaCMS dashboard (no-code)
 TinaCMS gives a web form UI for everything above. Local editing:
 
 ```bash
@@ -75,7 +75,7 @@ Connect the git repo to **Cloudflare Pages** or **Netlify**:
 - Build command: `npm run build` (or `npm run tina:build` if using Tina Cloud)
 - Output directory: `dist`
 
-Each push — or each save in the Tina dashboard — auto-rebuilds and redeploys.
+Each push, or each save in the Tina dashboard, auto-rebuilds and redeploys.
 
 ## Notes
 
@@ -83,5 +83,5 @@ Each push — or each save in the Tina dashboard — auto-rebuilds and redeploys
   the files or the CMS.
 - `photo` fields are `null` → striped placeholder shown. Add an image path
   (file in `public/`) to replace.
-- Blog entries are **external links** (open in a new tab) — this site lists
+- Blog entries are **external links** (open in a new tab); this site lists
   them, it does not host blog posts.

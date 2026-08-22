@@ -41,6 +41,7 @@ const experience = defineCollection({
     role: z.string(),
     place: z.string(),
     desc: z.string(),
+    url: z.string().optional(),
   }),
 });
 
@@ -78,6 +79,16 @@ const projects = defineCollection({
     stack: z.array(z.string()),
     featured: z.boolean().default(false),
     subtitle: z.string(),
+    heroImage: z.string().nullable().default(null),
+    links: z
+      .object({
+        live: z.string().optional(),
+        github: z.string().optional(),
+        linkedin: z.string().optional(),
+        playStore: z.string().optional(),
+      })
+      .default({}),
+    features: z.array(z.string()).default([]),
     caseStudy: z.object({
       role: z.string(),
       stackLabel: z.string(),

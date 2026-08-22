@@ -59,8 +59,8 @@ function formatBlogDate(iso: string): string {
 ---
 
 <Base
-  title={`${profile.name} — Portfolio`}
-  description={`${profile.name} — ${profile.tagline.map((s) => s.text).join(' ')}`}
+  title={`${profile.name} · Portfolio`}
+  description={`${profile.name} · ${profile.tagline.map((s) => s.text).join(' ')}`}
 >
   <GridPaper size={22} class="home-paper">
 
@@ -69,7 +69,7 @@ function formatBlogDate(iso: string): string {
 
     {/* ── Desktop top nav (hidden on mobile) ── */}
     <nav class="top-nav" aria-label="Site navigation">
-      <Mono size={11} as="span">// portfolio.2026 — ashwin.kv</Mono>
+      <Mono size={11} as="span">// portfolio.2026 · ashwin.kv</Mono>
       <div class="top-nav-links">
         <HandLink href="/projects"><Hand size={22}>work</Hand></HandLink>
         <HandLink href="/gallery"><Hand size={22}>gallery</Hand></HandLink>
@@ -83,10 +83,33 @@ function formatBlogDate(iso: string): string {
     ════════════════════════════════════════ */}
     <section class="hero-section">
       {/* Mobile mono label */}
-      <Mono size={9} as="div" class="hero-mono-label">// portfolio.2026 — ashwin.kv</Mono>
+      <Mono size={9} as="div" class="hero-mono-label">// portfolio.2026 · ashwin.kv</Mono>
 
       <div class="hero-inner">
-        {/* Left column — text */}
+        {/* Photo: first in source so the mobile float wraps text around it.
+            Desktop column order is pinned via grid-column, not source order. */}
+        <div class="hero-photo-wrap">
+          <div class="hero-photo-inner">
+            {/* Washi tape strips */}
+            <div class="washi washi-top" aria-hidden="true"></div>
+            <div class="washi washi-bottom" aria-hidden="true"></div>
+            <PhotoCutout
+              width="clamp(116px, 33vw, 280px)"
+              height="clamp(141px, 40vw, 340px)"
+              rotate={-3}
+              label={profile.photoCaption}
+              src={profile.photo ?? undefined}
+              alt={`Photo of ${profile.firstName}`}
+            />
+          </div>
+          {/* Desktop caption doodle */}
+          <div class="photo-caption-wrap" aria-hidden="true">
+            <HandArrow direction="up-left" length={80} />
+            <Hand size={22} color={NB.inkSoft} class="photo-caption-text">{profile.photoCaption}</Hand>
+          </div>
+        </div>
+
+        {/* Text */}
         <div class="hero-text">
           <Marker size={"clamp(44px, 8vw, 72px)"}>{profile.greeting}</Marker>
           <Marker
@@ -126,27 +149,6 @@ function formatBlogDate(iso: string): string {
           </div>
         </div>
 
-        {/* Right column — photo */}
-        <div class="hero-photo-wrap">
-          <div class="hero-photo-inner">
-            {/* Washi tape strips */}
-            <div class="washi washi-top" aria-hidden="true"></div>
-            <div class="washi washi-bottom" aria-hidden="true"></div>
-            <PhotoCutout
-              width="clamp(116px, 33vw, 280px)"
-              height="clamp(141px, 40vw, 340px)"
-              rotate={-3}
-              label={profile.photoCaption}
-              src={profile.photo ?? undefined}
-              alt={`Photo of ${profile.firstName}`}
-            />
-          </div>
-          {/* Desktop caption doodle */}
-          <div class="photo-caption-wrap" aria-hidden="true">
-            <HandArrow direction="up-left" length={80} />
-            <Hand size={22} color={NB.inkSoft} class="photo-caption-text">{profile.photoCaption}</Hand>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -185,8 +187,20 @@ function formatBlogDate(iso: string): string {
               <Mono size={9} as="div" class="exp-year">{entry.data.year}</Mono>
               <div class="exp-body">
                 <Hand size={"clamp(20px, 2vw, 26px)"} weight={600} as="div" class="exp-role">{entry.data.role}</Hand>
-                <Hand size={"clamp(17px, 1.8vw, 22px)"} color={NB.pencil} as="div" class="exp-place">{entry.data.place}</Hand>
-                <Hand size={"clamp(17px, 1.8vw, 22px)"} color={NB.inkSoft} as="div" class="exp-desc">{entry.data.desc}</Hand>
+                {entry.data.url ? (
+                  <HandLink
+                    href={entry.data.url}
+                    color={NB.pencil}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="exp-place-link"
+                  >
+                    <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.pencil} as="span" class="exp-place">{entry.data.place}</Hand>
+                  </HandLink>
+                ) : (
+                  <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.pencil} as="div" class="exp-place">{entry.data.place}</Hand>
+                )}
+                <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.inkSoft} as="div" class="exp-desc">{entry.data.desc}</Hand>
               </div>
             </div>
           ))}
@@ -196,6 +210,7 @@ function formatBlogDate(iso: string): string {
       {/* Education + Skills */}
       <div class="edu-skills-col">
         {/* Education */}
+        <div class="edu-block">
         <div class="section-title">
           <StickyNote color={NB.yellow} rotate={-2} inline>
             <Marker size={"clamp(26px, 3vw, 34px)"}>Education</Marker>
@@ -207,11 +222,12 @@ function formatBlogDate(iso: string): string {
               <Mono size={9} as="div" class="exp-year">{entry.data.year}</Mono>
               <div class="exp-body">
                 <Hand size={"clamp(20px, 2vw, 26px)"} weight={600} as="div" class="exp-role">{entry.data.role}</Hand>
-                <Hand size={"clamp(17px, 1.8vw, 22px)"} color={NB.pencil} as="div" class="exp-place">{entry.data.place}</Hand>
-                <Hand size={"clamp(17px, 1.8vw, 22px)"} color={NB.inkSoft} as="div" class="exp-desc">{entry.data.desc}</Hand>
+                <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.pencil} as="div" class="exp-place">{entry.data.place}</Hand>
+                <Hand size={"clamp(15px, 1.5vw, 18px)"} color={NB.inkSoft} as="div" class="exp-desc">{entry.data.desc}</Hand>
               </div>
             </div>
           ))}
+        </div>
         </div>
 
         {/* Good At */}
@@ -225,7 +241,13 @@ function formatBlogDate(iso: string): string {
             {allSkills.map((skill) => (
               <li class="skill-item">
                 <Doodle kind="check" size={16} color={NB.red} class="skill-check" />
-                <Hand size={"clamp(19px, 2vw, 22px)"}>{skill.data.label}</Hand>
+                <div class="skill-chips">
+                  {skill.data.label.split(',').map((part) => (
+                    <span class="skill-chip">
+                      <Hand size={"clamp(15px, 1.5vw, 18px)"}>{part.trim()}</Hand>
+                    </span>
+                  ))}
+                </div>
               </li>
             ))}
           </ul>
@@ -369,7 +391,7 @@ function formatBlogDate(iso: string): string {
       {/* Footer */}
       <footer class="footer">
         <Mono size={9} as="span" class="footer-left">{profile.footerNote}</Mono>
-        <Hand size={22} color={NB.pencil} as="span" class="footer-right">— end of page ✦</Hand>
+        <Hand size={22} color={NB.pencil} as="span" class="footer-right">end of page ✦</Hand>
       </footer>
     </section>
 
@@ -384,7 +406,7 @@ function formatBlogDate(iso: string): string {
   max-width: 1280px;
   margin: 0 auto;
   min-height: 100vh;
-  /* `clip` (not `hidden`) — `hidden` would force overflow-y:auto and turn
+  /* `clip` (not `hidden`): `hidden` would force overflow-y:auto and turn
      this into a nested scroll container, producing a second scrollbar. */
   overflow-x: clip;
 }
@@ -403,7 +425,7 @@ function formatBlogDate(iso: string): string {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
-   TOP NAV — desktop only
+   TOP NAV: desktop only
 ──────────────────────────────────────────────────────────────────────────── */
 .top-nav {
   display: none;
@@ -456,10 +478,18 @@ function formatBlogDate(iso: string): string {
   }
 }
 
+/* Mobile: block flow with the photo floated right, so the tagline and tag
+   pills wrap beside it and then reclaim the full width underneath, no dead
+   column of space below the photo. */
 .hero-inner {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  display: block;
+}
+
+/* Contain the float so it can't bleed into the bio section below. */
+.hero-inner::after {
+  content: "";
+  display: block;
+  clear: both;
 }
 
 @media (min-width: 880px) {
@@ -469,11 +499,15 @@ function formatBlogDate(iso: string): string {
     gap: 40px;
     padding-top: 12px;
   }
+  /* Photo is first in source order for the mobile float; put the columns
+     back in visual order here. ::after is not generated in grid. */
+  .hero-text { grid-column: 1; grid-row: 1; }
+  .hero-photo-wrap { grid-column: 2; grid-row: 1; }
+  .hero-inner::after { content: none; }
 }
 
 /* Hero text */
 .hero-text {
-  flex: 1;
   min-width: 0;
 }
 
@@ -493,18 +527,17 @@ function formatBlogDate(iso: string): string {
   margin-top: 4px;
 }
 
-/* Tag pills */
+/* Tag pills: inline-block rather than flex on purpose: inline content wraps
+   around the floated photo, flex items do not (they would overlap it). */
 .hero-tags {
-  display: flex;
-  gap: 8px;
   margin-top: 16px;
-  flex-wrap: wrap;
+  margin-bottom: -8px; /* absorb the last row's pill margin */
   max-width: 540px;
+  line-height: 0; /* kill inline-block baseline gaps */
 }
 
 @media (min-width: 880px) {
   .hero-tags {
-    gap: 10px;
     margin-top: 22px;
   }
 }
@@ -512,14 +545,22 @@ function formatBlogDate(iso: string): string {
 .tag-pill {
   font-family: "Kalam", cursive;
   font-size: clamp(17px, 2vw, 22px);
+  line-height: 1.5;
   padding: clamp(1px, 0.3vw, 2px) clamp(8px, 1.2vw, 14px);
   border: 1.5px solid var(--nb-ink);
   border-radius: 999px;
   background: var(--nb-paper);
   display: inline-block;
+  margin: 0 8px 8px 0;
 }
 
-/* Status dot — desktop only */
+@media (min-width: 880px) {
+  .tag-pill {
+    margin: 0 10px 10px 0;
+  }
+}
+
+/* Status dot: desktop only */
 .hero-status {
   display: none;
 }
@@ -543,18 +584,19 @@ function formatBlogDate(iso: string): string {
   flex-shrink: 0;
 }
 
-/* Hero photo */
+/* Hero photo: floated on mobile so text flows around and under it. */
 .hero-photo-wrap {
   position: relative;
-  flex-shrink: 0;
-  margin-top: 4px;
+  float: right;
+  margin: 4px 0 10px 16px;
 }
 
 @media (min-width: 880px) {
   .hero-photo-wrap {
+    float: none; /* ignored on grid items anyway; explicit for clarity */
     padding-top: 24px;
     padding-left: 40px;
-    margin-top: 0;
+    margin: 0;
   }
 }
 
@@ -660,11 +702,43 @@ function formatBlogDate(iso: string): string {
   gap: 0;
 }
 
+/* Experience runs the full width; education and skills share a row beneath it. */
 @media (min-width: 880px) {
   .exp-edu-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding-top: 36px;
+  }
+
+  .edu-skills-col {
+    display: grid;
     grid-template-columns: 1.1fr 1fr;
     gap: 60px;
-    padding-top: 36px;
+    align-items: start;
+  }
+
+  /* Already spaced by the grid row gap once it sits in its own column. */
+  .skills-wrap {
+    margin-top: 0;
+  }
+}
+
+/* Wide screens: experience entries run two across, so the full-width block
+   actually uses the width instead of leaving the right half empty. Scoped to
+   .exp-col — education shares .exp-rows but sits in a narrow column. */
+@media (min-width: 1040px) {
+  .exp-col .exp-rows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 56px;
+  }
+
+  /* The single-column rule strips the rule off the final entry; in a grid the
+     last item sits mid-row, so it keeps its underline like the rest. */
+  .exp-col .exp-row:last-child {
+    border-bottom: 1px dashed rgba(90, 90, 90, 0.22);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
   }
 }
 
@@ -684,17 +758,28 @@ function formatBlogDate(iso: string): string {
   margin-top: 4px;
 }
 
+/* One entry per band, separated by a faint rule. Entries previously ran
+   together at 14px apart with no divider, which is what made the column
+   read as a wall of handwriting. */
 .exp-row {
   display: flex;
   gap: 12px;
-  margin-bottom: 14px;
-  padding: 0 4px;
+  margin-bottom: 20px;
+  padding: 0 4px 20px;
+  border-bottom: 1px dashed rgba(90, 90, 90, 0.22);
+}
+
+.exp-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
 @media (min-width: 880px) {
   .exp-row {
     gap: 18px;
-    margin-bottom: 18px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
   }
 }
 
@@ -721,12 +806,27 @@ function formatBlogDate(iso: string): string {
 
 .exp-place {
   display: block;
-  margin-top: -2px;
+  margin-top: 1px;
 }
 
+/* The linked variant: anchor carries the block spacing the div had. */
+.exp-place-link {
+  display: inline-block;
+  margin-top: 1px;
+}
+
+.exp-place-link .exp-place {
+  display: inline;
+  margin-top: 0;
+}
+
+/* Cap the measure: full-column handwriting lines are hard to track back to
+   the next line. ~54 characters keeps it comfortable. */
 .exp-desc {
   display: block;
-  margin-top: 2px;
+  margin-top: 8px;
+  line-height: 1.55;
+  max-width: 54ch;
 }
 
 /* Skills */
@@ -740,32 +840,42 @@ function formatBlogDate(iso: string): string {
   }
 }
 
+/* Single column: two columns of comma-separated lists wrapped mid-list, so
+   "JavaScript, TypeScript, Python" broke across a column boundary. */
 .skills-list {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   padding: 0 0 0 4px;
   list-style: none;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 4px;
-}
-
-@media (min-width: 880px) {
-  .skills-list {
-    grid-template-columns: 1fr 1fr;
-    gap: 4px 18px;
-  }
+  gap: 12px;
 }
 
 .skill-item {
   display: flex;
-  gap: 8px;
-  align-items: baseline;
-  margin-bottom: 4px;
+  gap: 10px;
+  align-items: flex-start;
 }
 
 .skill-check {
   flex-shrink: 0;
-  margin-top: 4px;
+  margin-top: 6px;
+}
+
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 7px;
+  line-height: 0;
+}
+
+.skill-chip {
+  display: inline-block;
+  padding: 1px 10px 3px;
+  border: 1.5px solid rgba(90, 90, 90, 0.4);
+  border-radius: 999px;
+  background: var(--nb-paper);
+  line-height: 1.4;
 }
 
 /* ────────────────────────────────────────────────────────────────────────────

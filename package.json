@@ -1,7 +1,7 @@
 {
   "name": "portfolio-simple",
   "version": "1.0.0",
-  "description": "Ashwin KV — notebook-style portfolio. Astro + TinaCMS.",
+  "description": "Ashwin KV: notebook-style portfolio. Astro + TinaCMS.",
   "type": "module",
   "scripts": {
     "dev": "astro dev",

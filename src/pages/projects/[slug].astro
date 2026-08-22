@@ -26,6 +26,7 @@ interface Props {
 const { entry } = Astro.props;
 const p = entry.data;
 const cs = p.caseStudy;
+const hasLinks = Boolean(p.links.live || p.links.github || p.links.linkedin || p.links.playStore);
 
 // Build sorted list to find next project (wrap around by order)
 const allEntries = await getCollection('projects');
@@ -38,7 +39,7 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
 ---
 
 <Base
-  title={`${p.title} — Case Study · Ashwin KV`}
+  title={`${p.title}: Case Study · Ashwin KV`}
   description={p.subtitle}
 >
   <GridPaper size={22} style="min-height: 100vh;">
@@ -82,6 +83,8 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
           height={200}
           rotate={-1.5}
           label="hero screenshot"
+          src={p.heroImage ?? undefined}
+          alt={`${p.title}: screenshot`}
           class="hero-photo"
         />
       </div>
@@ -106,10 +109,37 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
         </div>
       </div>
 
+      {/* ── Links ── */}
+      {hasLinks && (
+        <div class="links-row" data-reveal>
+          <Mono size={9} as="span" class="links-label">LINKS</Mono>
+          {p.links.live && (
+            <HandLink href={p.links.live} color={NB.redInk} target="_blank" rel="noopener">
+              <Hand size={18} color={NB.redInk} as="span">live site ↗</Hand>
+            </HandLink>
+          )}
+          {p.links.github && (
+            <HandLink href={p.links.github} color={NB.redInk} target="_blank" rel="noopener">
+              <Hand size={18} color={NB.redInk} as="span">source ↗</Hand>
+            </HandLink>
+          )}
+          {p.links.playStore && (
+            <HandLink href={p.links.playStore} color={NB.redInk} target="_blank" rel="noopener">
+              <Hand size={18} color={NB.redInk} as="span">play store ↗</Hand>
+            </HandLink>
+          )}
+          {p.links.linkedin && (
+            <HandLink href={p.links.linkedin} color={NB.redInk} target="_blank" rel="noopener">
+              <Hand size={18} color={NB.redInk} as="span">write-up ↗</Hand>
+            </HandLink>
+          )}
+        </div>
+      )}
+
       {/* ── Content blocks ── */}
       <div class="content-blocks">
 
-        {/* Overview — yellow sticky */}
+        {/* Overview: yellow sticky */}
         <div class="cs-block" data-reveal>
           <div class="cs-label-col">
             <StickyNote color={NB.yellow} rotate={-2} inline={true} class="cs-sticky">
@@ -123,7 +153,7 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
           </div>
         </div>
 
-        {/* The problem — pink sticky */}
+        {/* The problem: pink sticky */}
         <div class="cs-block" data-reveal>
           <div class="cs-label-col">
             <StickyNote color={NB.pink} rotate={2} inline={true} class="cs-sticky">
@@ -137,7 +167,7 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
           </div>
         </div>
 
-        {/* Approach — blue sticky + numbered list */}
+        {/* Approach: blue sticky + numbered list */}
         <div class="cs-block" data-reveal>
           <div class="cs-label-col">
             <StickyNote color={NB.blue} rotate={-1.5} inline={true} class="cs-sticky">
@@ -157,7 +187,30 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
           </div>
         </div>
 
-        {/* Process shots — between approach and outcome */}
+        {/* What it does: yellow sticky + checklist */}
+        {p.features.length > 0 && (
+          <div class="cs-block" data-reveal>
+            <div class="cs-label-col">
+              <StickyNote color={NB.yellow} rotate={1.8} inline={true} class="cs-sticky">
+                <Marker size="clamp(19px, 3vw, 28px)">what it does</Marker>
+              </StickyNote>
+            </div>
+            <div class="cs-body-col">
+              <ul class="feature-list">
+                {p.features.map((f) => (
+                  <li>
+                    <Mono size={11} color={NB.red} as="span" class="feature-tick">✓</Mono>
+                    <Hand size="clamp(17px, 2.8vw, 22px)" color={NB.ink} as="span">
+                      {f}
+                    </Hand>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Process shots: between approach and outcome */}
         <div class="process-section" data-reveal>
           <div class="process-heading">
             <Marker size="clamp(20px, 3.5vw, 28px)">process shots</Marker>
@@ -176,7 +229,7 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
           </div>
         </div>
 
-        {/* Outcome — green sticky + stats */}
+        {/* Outcome: green sticky + stats */}
         <div class="cs-block" data-reveal>
           <div class="cs-label-col">
             <StickyNote color={NB.green} rotate={1.5} inline={true} class="cs-sticky">
@@ -318,6 +371,34 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
   }
   .approach-list li { margin-bottom: 4px; }
 
+  /* ─────────────── Feature list ─────────────── */
+  .feature-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 1.5;
+  }
+  .feature-list li {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    margin-bottom: 5px;
+  }
+  .feature-tick { flex-shrink: 0; }
+
+  /* ─────────────── Links row ─────────────── */
+  .links-row {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 18px;
+  }
+  .links-label {
+    color: var(--nb-pencil);
+    margin-right: 2px;
+  }
+
   /* ─────────────── Process shots ─────────────── */
   .process-section { margin-top: 22px; }
   .process-heading { margin-bottom: 12px; }
@@ -381,7 +462,7 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
       height: 380px !important;
     }
 
-    /* Meta strip — 4 columns on desktop */
+    /* Meta strip: 4 columns on desktop */
     .meta-strip {
       margin-top: 28px;
       padding: 16px 22px;
@@ -416,7 +497,7 @@ const shotRots = [-1.5, 1, -2, 1.5, -1, 0.8, -1.8, 1.2];
       padding-left: 28px;
     }
 
-    /* Process shots — 4 columns on desktop */
+    /* Process shots: 4 columns on desktop */
     .process-section {
       margin-top: 36px;
     }

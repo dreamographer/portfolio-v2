@@ -43,13 +43,13 @@ const restPosts = sorted.filter((p) => p.id !== featuredEntry?.id);
 // Unique tags (preserve insertion order, deduplicated)
 const uniqueTags = [...new Set(sorted.map((p) => p.data.tag))];
 
-// Tag chip rotations — cycle through preset values
+// Tag chip rotations: cycle through preset values
 const chipRots = [-1, 1, -0.5, 1, -1, 0.5, -0.8, 0.6, -0.4, 0.9];
 
 const featured = featuredEntry?.data;
 ---
 
-<Base title="Blog — Ashwin KV" description="Notes I write to myself, mostly. About code, design, and shipping.">
+<Base title="Blog · Ashwin KV" description="Notes I write to myself, mostly. About code, design, and shipping.">
   <GridPaper size={22} class="blog-root">
 
     {/* ─── Header ─── */}
@@ -72,7 +72,7 @@ const featured = featuredEntry?.data;
 
       {/* ─── Tag chips ─── */}
       <div class="tag-row">
-        {/* "all" chip — always yellow */}
+        {/* "all" chip: always yellow */}
         <span
           class="tag-chip tag-chip--active"
           style={`background: ${NB.yellow}; transform: rotate(${chipRots[0]}deg);`}
@@ -318,7 +318,7 @@ const featured = featuredEntry?.data;
       max-width: 900px;
     }
 
-    /* Posts — 2 columns desktop */
+    /* Posts: 2 columns desktop */
     .posts-list {
       display: grid;
       grid-template-columns: 1fr 1fr;

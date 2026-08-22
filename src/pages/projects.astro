@@ -17,7 +17,7 @@ const projects = allProjects.sort((a, b) => a.data.order - b.data.order);
 const rots = [-0.6, 0.5, -0.4, 0.6, -0.3, 0.4];
 ---
 
-<Base title="Projects — Ashwin KV" description="All projects by Ashwin KV.">
+<Base title="Projects · Ashwin KV" description="All projects by Ashwin KV.">
   <GridPaper size={22} style="min-height: 100vh;">
 
     {/* ── Page header ── */}
@@ -36,7 +36,7 @@ const rots = [-0.6, 0.5, -0.4, 0.6, -0.3, 0.4];
     {/* ── Body ── */}
     <div class="page-body">
       <Hand size={19} color={NB.inkSoft} as="p" class="intro-line">
-        Things I've built. Most are placeholders — drop your real work in.
+        Things I've built: real-time collaboration tools, e-commerce, tax automation, ed-tech.
       </Hand>
 
       {/* ── Projects grid ── */}
@@ -53,7 +53,7 @@ const rots = [-0.6, 0.5, -0.4, 0.6, -0.3, 0.4];
               aria-label={`View case study for ${p.title}`}
               data-reveal
             >
-              {/* Hand-drawn border — position:absolute fills the card via HandBox */}
+              {/* Hand-drawn border: position:absolute fills the card via HandBox */}
               <HandBox rounded={true} color={NB.ink} strokeWidth={2} />
 
               {/* All card content floats above the SVG border */}
