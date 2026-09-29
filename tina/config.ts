@@ -59,6 +59,16 @@ export default defineConfig({
           { type: 'string', name: 'bio', label: 'Bio paragraph', ui: { component: 'textarea' } },
           {
             type: 'object',
+            name: 'resume',
+            label: 'Resume download',
+            fields: [
+              { type: 'image', name: 'file', label: 'Resume file (PDF)' },
+              { type: 'string', name: 'label', label: 'Button label' },
+              { type: 'string', name: 'sub', label: 'Sub-label' },
+            ],
+          },
+          {
+            type: 'object',
             name: 'contacts',
             label: 'Contact stickies',
             list: true,

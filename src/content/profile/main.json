@@ -28,15 +28,20 @@
   "photo": "/media/ChatGPT Image May 20, 2026, 01_04_32 AM.png",
   "photoCaption": "that's me, says hi",
   "tags": [
-    "co-founder",
+    "self-taught",
     "full-stack",
+    "next.js",
     "react",
+    "tailwind",
     "typescript",
-    "node",
-    "aws",
-    "trivandrum"
+    "node"
   ],
   "bio": "I write code for the web, mostly frontend, often the whole stack. I've built real-time collaboration tools, e-commerce from scratch, tax automation for UAE businesses, and live-streamed classrooms. Now I'm co-founding Octane Innovations. I care about fast pages, calm interfaces, and details that make people smile.",
+  "resume": {
+    "file": "/media/Ashwin-Resume-2026.pdf",
+    "label": "grab my resume",
+    "sub": "pdf · 2026"
+  },
   "contacts": [
     {
       "icon": "✉",

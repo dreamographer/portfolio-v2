@@ -139,6 +139,22 @@ function formatBlogDate(iso: string): string {
             ))}
           </div>
 
+          {/* Resume download */}
+          {profile.resume && (
+            <a
+              href={profile.resume.file}
+              download
+              class="resume-btn"
+              aria-label={`Download resume (${profile.resume.sub})`}
+            >
+              <span class="resume-btn-icon" aria-hidden="true">↓</span>
+              <span class="resume-btn-text">
+                <Hand size={"clamp(19px, 2vw, 23px)"} as="span">{profile.resume.label}</Hand>
+                <Mono size={9} as="span" class="resume-btn-sub">{profile.resume.sub}</Mono>
+              </span>
+            </a>
+          )}
+
           {/* Desktop-only status dot */}
           <div class="hero-status">
             <Mono size={10} as="span">STATUS</Mono>
@@ -386,6 +402,20 @@ function formatBlogDate(iso: string): string {
             </StickyNote>
           </a>
         ))}
+
+        {profile.resume && (
+          <a href={profile.resume.file} download class="contact-sticky-link">
+            <StickyNote color={NB.green} rotate={-1.2} class="contact-sticky">
+              <div class="contact-sticky-inner">
+                <span class="contact-icon">↓</span>
+                <div class="contact-text">
+                  <Mono size={9} as="div">resume · {profile.resume.sub}</Mono>
+                  <Hand size={"clamp(17px, 1.8vw, 20px)"} as="div">{profile.resume.label}</Hand>
+                </div>
+              </div>
+            </StickyNote>
+          </a>
+        )}
       </div>
 
       {/* Footer */}
@@ -571,6 +601,68 @@ function formatBlogDate(iso: string): string {
     align-items: center;
     margin-top: 26px;
     gap: 4px;
+  }
+}
+
+/* Resume download button: hand-drawn box that lifts on hover. */
+.resume-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 8px 18px 8px 14px;
+  border: 2px solid var(--nb-ink);
+  border-radius: 14px 18px 12px 20px;
+  background: var(--nb-paper);
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  text-decoration: none;
+  color: inherit;
+  transform: rotate(-1.2deg);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.resume-btn:hover,
+.resume-btn:focus-visible {
+  transform: rotate(-1.2deg) translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--nb-ink);
+  background: #c6efb0;
+}
+
+.resume-btn:active {
+  transform: rotate(-1.2deg) translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--nb-ink);
+}
+
+.resume-btn-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: resume-nudge 2.6s ease-in-out infinite;
+}
+
+.resume-btn-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.resume-btn-sub {
+  margin-top: 1px;
+}
+
+@keyframes resume-nudge {
+  0%, 82%, 100% { transform: translateY(0); }
+  88% { transform: translateY(3px); }
+  94% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-btn-icon { animation: none; }
+}
+
+@media (min-width: 880px) {
+  .resume-btn {
+    margin-top: 26px;
   }
 }
 

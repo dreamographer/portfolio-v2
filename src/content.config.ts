@@ -19,6 +19,14 @@ const profile = defineCollection({
     photoCaption: z.string(),
     tags: z.array(z.string()),
     bio: z.string(),
+    resume: z
+      .object({
+        file: z.string(),
+        label: z.string().default('grab my resume'),
+        sub: z.string().default('pdf'),
+      })
+      .nullable()
+      .default(null),
     contacts: z.array(
       z.object({
         icon: z.string(),
