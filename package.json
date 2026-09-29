@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "tinacms build && astro build",
+    "build:site": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "tina:dev": "tinacms dev -c \"astro dev\"",
-    "tina:build": "tinacms build && astro build"
+    "tina:dev": "tinacms dev -c \"astro dev\""
   },
   "keywords": [
     "portfolio",
