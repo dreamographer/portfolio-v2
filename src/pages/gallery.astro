@@ -6,28 +6,39 @@ import Hand from '../components/Hand.astro';
 import HandLink from '../components/HandLink.astro';
 import Marker from '../components/Marker.astro';
 import Mono from '../components/Mono.astro';
-import PhotoCutout from '../components/PhotoCutout.astro';
 import { NB } from '../lib/notebook';
+import { img } from '../lib/img.mjs';
 
 const rawItems = await getCollection('gallery');
-const items = rawItems.sort((a, b) => a.data.order - b.data.order);
 
-// Split into columns for masonry layout
-// Mobile: 2 columns (even index → col 0, odd → col 1)
-// Desktop: 4 columns (index % 4)
-const col0 = items.filter((_, i) => i % 2 === 0);
-const col1 = items.filter((_, i) => i % 2 === 1);
+// Every photo gets resized copies (see src/lib/img.mjs): three square crops
+// for the grid tile's srcset, and one capped at 1600px for the lightbox.
+// The originals in public/media are never sent to the browser.
+const tiles = await Promise.all(
+  rawItems
+    .filter((it) => it.data.image)
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (it) => {
+      const src = it.data.image as string;
+      const [s240, s480, s720, full] = await Promise.all([
+        img(src, 'sq240'),
+        img(src, 'sq480'),
+        img(src, 'sq720'),
+        img(src, 'full'),
+      ]);
+      return {
+        label: it.data.label,
+        thumb: s480 as string,
+        srcset: `${s240} 240w, ${s480} 480w, ${s720} 720w`,
+        full: full as string,
+      };
+    }),
+);
 
-// Desktop 4-col split
-const dcols: (typeof items)[] = [[], [], [], []];
-items.forEach((it, i) => dcols[i % 4].push(it));
+// Tiles above the fold load immediately; the rest wait until scrolled near.
+const EAGER = 9;
 
-// Ordered list for the preview viewer. The two grids split items across
-// columns, so DOM order does not match display order; the viewer navigates
-// by this list instead.
-const viewerData = items
-  .filter((it) => it.data.image)
-  .map((it) => ({ src: it.data.image as string, label: it.data.label }));
+const viewerData = tiles.map((t) => ({ src: t.full, label: t.label }));
 ---
 
 <Base title="Gallery · Ashwin KV" description="Photos, screenshots, sketches. A pinboard of stuff I like.">
@@ -41,7 +52,7 @@ const viewerData = items
         </HandLink>
         <Marker size="clamp(36px, 7vw, 60px)" as="h1" style="display:block; margin-top:2px;">Gallery.</Marker>
       </div>
-      <Mono size={9} class="detail-header-tag">ashwin.kv</Mono>
+      <Mono size={9} class="detail-header-tag">{tiles.length} posts</Mono>
     </header>
 
     {/* ─── Content ─── */}
@@ -50,65 +61,26 @@ const viewerData = items
         Photos, screenshots, sketches. A pinboard of stuff I like.
       </Hand>
 
-      {/* ─── Mobile grid (2-col) ─── */}
-      <div class="gallery-grid-mobile">
-        <div class="gallery-col">
-          {col0.map((it) => (
-            <PhotoCutout
-              data-reveal
-              data-preview={it.data.image ?? undefined}
-              data-label={it.data.label}
-              width="100%"
-              height={it.data.height ?? 150}
-              rotate={it.data.rotate ?? -1.5}
-              label={it.data.label}
-              src={it.data.image ?? null}
-              alt={it.data.label}
-            />
-          ))}
-        </div>
-        <div class="gallery-col gallery-col--offset">
-          {col1.map((it) => (
-            <PhotoCutout
-              data-reveal
-              data-preview={it.data.image ?? undefined}
-              data-label={it.data.label}
-              width="100%"
-              height={it.data.height ?? 150}
-              rotate={it.data.rotate ?? 1.5}
-              label={it.data.label}
-              src={it.data.image ?? null}
-              alt={it.data.label}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ─── Desktop grid (4-col) ─── */}
-      <div class="gallery-grid-desktop">
-        {dcols.map((col, ci) => (
-          <div class:list={['gallery-dcol', ci % 2 !== 0 ? 'gallery-dcol--offset' : '']}>
-            {col.map((it) => (
-              <PhotoCutout
-                data-reveal
-                data-preview={it.data.image ?? undefined}
-                data-label={it.data.label}
-                width="100%"
-                height={it.data.height ?? 180}
-                rotate={it.data.rotate ?? (ci % 2 === 0 ? -1.5 : 1.5)}
-                label={it.data.label}
-                src={it.data.image ?? null}
-                alt={it.data.label}
+      {/* ─── Square grid, 3 across at every width ─── */}
+      <ul class="ig-grid">
+        {tiles.map((t, i) => (
+          <li class="ig-cell">
+            <button class="ig-tile" type="button" data-idx={i} aria-label={`View ${t.label} full size`}>
+              <img
+                src={t.thumb}
+                srcset={t.srcset}
+                sizes="(min-width: 975px) 309px, 33vw"
+                width="480"
+                height="480"
+                alt={t.label}
+                loading={i < EAGER ? 'eager' : 'lazy'}
+                decoding="async"
               />
-            ))}
-          </div>
+              <span class="ig-tile-label" aria-hidden="true">{t.label}</span>
+            </button>
+          </li>
         ))}
-      </div>
-    </div>
-
-    {/* ─── Hover preview (pointer devices only) ─── */}
-    <div class="gv-hover" id="gvHover" aria-hidden="true">
-      <img class="gv-hover-img" alt="" />
+      </ul>
     </div>
 
     {/* ─── Full preview overlay ─── */}
@@ -138,44 +110,36 @@ const viewerData = items
 </Base>
 
 <script>
-  // Photo preview: hover popover on pointer devices, tap/click opens the full
-  // overlay everywhere. Written to survive ClientRouter navigations: init()
-  // re-runs per page, while document-level listeners are bound exactly once.
+  // Photo viewer: tapping a tile opens the full overlay. Written to survive
+  // ClientRouter navigations: init() re-runs per page, while document-level
+  // listeners are bound exactly once.
   type Item = { src: string; label: string };
 
   interface ViewerState {
     items: Item[];
-    byIndex: Map<string, number>;
     gv: HTMLElement | null;
     gvImg: HTMLImageElement | null;
     gvCap: HTMLElement | null;
     gvCount: HTMLElement | null;
-    hover: HTMLElement | null;
-    hoverImg: HTMLImageElement | null;
     current: number;
     lastTrigger: HTMLElement | null;
-    raf: number;
   }
 
   const S: ViewerState = {
     items: [],
-    byIndex: new Map(),
     gv: null,
     gvImg: null,
     gvCap: null,
     gvCount: null,
-    hover: null,
-    hoverImg: null,
     current: -1,
     lastTrigger: null,
-    raf: 0,
   };
 
-  function hideHover() {
-    if (!S.hover) return;
-    S.hover.classList.remove('is-on');
-    // removeAttribute, not src='': an empty src re-requests the page URL
-    S.hoverImg?.removeAttribute('src');
+  // Warm the cache for a photo so stepping to it is instant.
+  function preload(i: number) {
+    const n = S.items.length;
+    if (!n) return;
+    new Image().src = S.items[(i + n) % n].src;
   }
 
   function show(i: number) {
@@ -186,12 +150,13 @@ const viewerData = items
     S.gvImg.alt = it.label;
     if (S.gvCap) S.gvCap.textContent = it.label;
     if (S.gvCount) S.gvCount.textContent = `${S.current + 1} / ${S.items.length}`;
+    preload(S.current + 1);
+    preload(S.current - 1);
   }
 
   function openViewer(i: number, trigger: HTMLElement | null) {
     if (!S.gv) return;
     S.lastTrigger = trigger;
-    hideHover();
     show(i);
     S.gv.hidden = false;
     document.documentElement.style.overflow = 'hidden';
@@ -206,35 +171,20 @@ const viewerData = items
     S.lastTrigger = null;
   }
 
-  function positionHover(x: number, y: number) {
-    const hover = S.hover;
-    if (!hover) return;
-    const w = hover.offsetWidth;
-    const h = hover.offsetHeight;
-    const pad = 14;
-    let left = x + 26;
-    if (left + w > window.innerWidth - pad) left = x - w - 26; // flip sides
-    left = Math.max(pad, Math.min(left, window.innerWidth - w - pad));
-    let top = Math.max(pad, Math.min(y - h / 2, window.innerHeight - h - pad));
-    hover.style.transform = `translate(${left}px, ${top}px)`;
-  }
-
   function init() {
     // Reset state: the previous page's nodes are gone after a swap.
     S.items = [];
-    S.byIndex = new Map();
     S.current = -1;
     S.lastTrigger = null;
 
     const dataEl = document.getElementById('gvData');
+    const grid = document.querySelector<HTMLElement>('.ig-grid');
     S.gv = document.getElementById('gv');
     S.gvImg = document.getElementById('gvImg') as HTMLImageElement | null;
     S.gvCap = document.getElementById('gvCap');
     S.gvCount = document.getElementById('gvCount');
-    S.hover = document.getElementById('gvHover');
-    S.hoverImg = S.hover?.querySelector('.gv-hover-img') as HTMLImageElement | null;
 
-    if (!dataEl || !S.gv || !S.gvImg) return; // not the gallery page
+    if (!dataEl || !grid || !S.gv || !S.gvImg) return; // not the gallery page
 
     try {
       S.items = JSON.parse(dataEl.textContent || '[]');
@@ -242,7 +192,6 @@ const viewerData = items
       return;
     }
     if (!S.items.length) return;
-    S.byIndex = new Map(S.items.map((it, i) => [it.src, i]));
 
     S.gv.addEventListener('click', (e) => {
       const t = e.target as HTMLElement;
@@ -251,43 +200,23 @@ const viewerData = items
       if (t.closest('[data-gv-next]')) return show(S.current + 1);
     });
 
-    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    // One delegated listener for the whole grid instead of one per tile.
+    const tileOf = (e: Event) =>
+      (e.target as HTMLElement).closest<HTMLElement>('.ig-tile[data-idx]');
 
-    document.querySelectorAll<HTMLElement>('[data-preview]').forEach((el) => {
-      const src = el.dataset.preview;
-      if (!src) return;
-      const idx = S.byIndex.get(src) ?? 0;
-
-      // Added by JS on purpose: without it there is no click affordance.
-      el.classList.add('gallery-item');
-      el.setAttribute('role', 'button');
-      el.setAttribute('tabindex', '0');
-      el.setAttribute('aria-label', `View ${el.dataset.label || 'photo'} full size`);
-
-      el.addEventListener('click', () => openViewer(idx, el));
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openViewer(idx, el);
-        }
-      });
-
-      if (!canHover || !S.hover || !S.hoverImg) return;
-
-      el.addEventListener('mouseenter', (e) => {
-        if (!S.gv || !S.gv.hidden || !S.hover || !S.hoverImg) return;
-        S.hoverImg.src = src;
-        S.hover.classList.add('is-on');
-        positionHover(e.clientX, e.clientY);
-      });
-      el.addEventListener('mousemove', (e) => {
-        if (!S.hover?.classList.contains('is-on')) return;
-        cancelAnimationFrame(S.raf);
-        const { clientX, clientY } = e;
-        S.raf = requestAnimationFrame(() => positionHover(clientX, clientY));
-      });
-      el.addEventListener('mouseleave', hideHover);
+    grid.addEventListener('click', (e) => {
+      const tile = tileOf(e);
+      if (tile) openViewer(Number(tile.dataset.idx), tile);
     });
+
+    // Pointer or keyboard focus landing on a tile means a click is likely:
+    // fetch its full-size copy early.
+    const warm = (e: Event) => {
+      const tile = tileOf(e);
+      if (tile) preload(Number(tile.dataset.idx));
+    };
+    grid.addEventListener('pointerover', warm);
+    grid.addEventListener('focusin', warm);
   }
 
   // Bind page-level listeners once per document, not once per navigation.
@@ -302,12 +231,9 @@ const viewerData = items
       else if (e.key === 'ArrowRight') show(S.current + 1);
     });
 
-    window.addEventListener('scroll', hideHover, { passive: true });
-
     // Navigating away with the overlay open must not leave scroll locked.
     document.addEventListener('astro:before-swap', () => {
       document.documentElement.style.overflow = '';
-      hideHover();
     });
 
     // Fires on first load and after every ClientRouter navigation.
@@ -340,35 +266,88 @@ const viewerData = items
 
   /* ─── Body ─── */
   .gallery-body {
-    padding: 16px 18px 60px;
+    padding: 16px 0 60px;
   }
 
   .gallery-intro {
     display: block;
     margin: 0 0 14px;
+    padding: 0 18px;
   }
 
-  /* ─── Mobile 2-col grid ─── */
-  .gallery-grid-mobile {
+  /* ─── Grid: square tiles, 3 across, hairline gaps.
+     Edge to edge on phones, capped and centred on wide screens. ─── */
+  .ig-grid {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 935px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3px;
   }
 
-  .gallery-grid-desktop {
-    display: none;
+  .ig-cell {
+    aspect-ratio: 1;
   }
 
-  .gallery-col {
-    display: grid;
-    gap: 12px;
+  .ig-tile {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    overflow: hidden;
+    cursor: pointer;
+    /* shows while the photo is still loading */
+    background: rgba(26, 26, 26, 0.08);
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .gallery-col--offset {
-    margin-top: 20px;
+  .ig-tile img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  /* ─── Desktop 4-col grid ─── */
+  .ig-tile:focus-visible {
+    outline: 2.5px solid var(--nb-ink);
+    outline-offset: -2.5px;
+  }
+
+  /* Dimmed overlay with the caption, on hover or keyboard focus. */
+  .ig-tile-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.38);
+    color: #fff;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.14s ease;
+    pointer-events: none;
+  }
+  .ig-tile:focus-visible .ig-tile-label {
+    opacity: 1;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ig-tile:hover .ig-tile-label {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ig-tile-label { transition: none; }
+  }
+
   @media (min-width: 880px) {
     .detail-header {
       padding: 20px 60px 16px;
@@ -380,84 +359,19 @@ const viewerData = items
     }
 
     .gallery-body {
-      padding: 20px 60px 60px;
+      padding: 20px 20px 60px;
     }
 
     .gallery-intro {
       font-size: 24px;
-      margin-bottom: 22px;
+      margin: 0 auto 22px;
+      padding: 0;
+      max-width: 935px;
     }
 
-    /* Hide mobile grid, show desktop */
-    .gallery-grid-mobile {
-      display: none;
+    .ig-grid {
+      gap: 4px;
     }
-
-    .gallery-grid-desktop {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
-
-    .gallery-dcol {
-      display: grid;
-      gap: 18px;
-    }
-
-    .gallery-dcol--offset {
-      margin-top: 22px;
-    }
-  }
-
-  /* ─────────────── Clickable photo ─────────────── */
-  .gallery-item {
-    cursor: pointer;
-    outline-offset: 4px;
-  }
-  .gallery-item:focus-visible {
-    outline: 2.5px solid var(--nb-ink);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .gallery-item {
-      transition: transform 0.16s ease;
-    }
-    .gallery-item:hover {
-      /* nudge, without fighting the per-photo rotate() on the same element */
-      filter: brightness(1.04);
-    }
-  }
-
-  /* ─────────────── Hover preview ─────────────── */
-  .gv-hover {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 90;
-    padding: 7px 7px 26px;
-    background: #fff;
-    border: 1.5px solid var(--nb-ink);
-    box-shadow: 5px 6px 0 rgba(0, 0, 0, 0.16);
-    transform: translate(-9999px, -9999px);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.13s ease;
-    pointer-events: none;
-    rotate: -1.2deg;
-  }
-  .gv-hover.is-on {
-    opacity: 1;
-    visibility: visible;
-  }
-  .gv-hover-img {
-    display: block;
-    max-width: 340px;
-    max-height: 62vh;
-    width: auto;
-    height: auto;
-  }
-  /* No hover preview on touch; the tap opens the full overlay instead. */
-  @media (hover: none), (pointer: coarse) {
-    .gv-hover { display: none; }
   }
 
   /* ─────────────── Full preview overlay ─────────────── */

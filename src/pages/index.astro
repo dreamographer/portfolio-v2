@@ -15,6 +15,7 @@ import Doodle from '../components/Doodle.astro';
 import HandLink from '../components/HandLink.astro';
 import ProjectLogo from '../components/ProjectLogo.astro';
 import { NB, swatch } from '../lib/notebook';
+import { img } from '../lib/img.mjs';
 
 // ── Content ────────────────────────────────────────────────────────────────
 const profileEntries = await getCollection('profile');
@@ -36,9 +37,13 @@ const featuredProjects = allProjects.filter((p) => p.data.featured).length > 0
   ? allProjects.filter((p) => p.data.featured)
   : allProjects.slice(0, 3);
 
-const allGallery = (await getCollection('gallery'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
+const allGallery = await Promise.all(
+  (await getCollection('gallery'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .slice(0, 4)
+    // Resized copy: the originals in public/media can be 10MB+ each.
+    .map(async (item) => ({ ...item, thumb: await img(item.data.image, 'w640') })),
+);
 
 const allBlogLinks = (await getCollection('blogLinks'))
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
@@ -329,7 +334,7 @@ function formatBlogDate(iso: string): string {
             height={item.data.height ?? (i % 2 === 0 ? 110 : 140)}
             rotate={item.data.rotate ?? galleryRots[i % galleryRots.length]}
             label={item.data.label}
-            src={item.data.image ?? undefined}
+            src={item.thumb ?? undefined}
             alt={item.data.label}
           />
         ))}
